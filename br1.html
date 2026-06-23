@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>บร.1 - ค่าบริการงานแก้กระแสไฟฟ้าขัดข้อง</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Sarabun',sans-serif;background:#f0f4f8;color:#1a202c;font-size:15px}
+input,select,textarea,button{font-family:inherit;font-size:14px}
+input[type=text],input[type=password],input[type=number],input[type=email],select,textarea{width:100%;padding:8px 12px;border:1px solid #cbd5e0;border-radius:6px;background:#fff;color:#1a202c;outline:none;transition:border .2s}
+input:focus,select:focus,textarea:focus{border-color:#742582;box-shadow:0 0 0 3px rgba(116,37,130,.15)}
+input[readonly]{background:#f8fafc!important;color:#4a5568}
+label{font-size:13px;color:#4a5568;display:block;margin-bottom:4px;font-weight:500}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:6px;border:none;cursor:pointer;font-size:14px;font-weight:600;transition:all .2s}
+.btn-primary{background:#742582;color:#fff}.btn-primary:hover{background:#5c1c6e}
+.btn-success{background:#16a34a;color:#fff}.btn-success:hover{background:#15803d}
+.btn-danger{background:#dc2626;color:#fff}.btn-danger:hover{background:#b91c1c}
+.btn-warning{background:#d97706;color:#fff}.btn-warning:hover{background:#b45309}
+.btn-outline{background:#fff;color:#374151;border:1px solid #d1d5db}.btn-outline:hover{background:#f9fafb}
+.btn-sm{padding:5px 12px;font-size:13px}
+.card{background:#fff;border-radius:10px;box-shadow:0 1px 4px rgba(0,0,0,.08);padding:20px}
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600}
+.badge-green{background:#dcfce7;color:#166534}.badge-yellow{background:#fef9c3;color:#854d0e}
+.badge-red{background:#fee2e2;color:#991b1b}.badge-blue{background:#e9d5f7;color:#4a1660}
+.badge-gray{background:#f3f4f6;color:#4b5563}
+table{width:100%;border-collapse:collapse}
+th{background:#f8fafc;font-size:13px;font-weight:600;color:#4a5568;padding:10px 12px;text-align:left;border-bottom:1px solid #e2e8f0}
+td{padding:10px 12px;border-bottom:1px solid #f1f5f9;font-size:14px;vertical-align:middle}
+tr:hover td{background:#f8fafc}
+.page{display:none}.page.active{display:block}
+#app{min-height:100vh}
+.navbar{background:#4a1660;color:#fff;padding:0 16px;display:flex;align-items:center;justify-content:space-between;height:56px;position:sticky;top:0;z-index:100}
+.navbar-brand{font-size:15px;font-weight:700;color:#fff;display:flex;align-items:center;gap:8px}
+.navbar-nav{display:flex;align-items:center;gap:8px;flex-wrap:nowrap;overflow-x:auto}
+.nav-link{color:rgba(255,255,255,.8);padding:5px 12px;border-radius:6px;font-size:13px;cursor:pointer;transition:all .2s}
+.nav-link:hover,.nav-link.active{background:rgba(255,255,255,.15);color:#fff}
+.container{max-width:1160px;margin:0 auto;padding:24px 16px}
+.auth-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#4a1660 0%,#742582 100%)}
+.login-card{background:#fff;border-radius:14px;padding:36px;width:100%;max-width:440px;box-shadow:0 20px 40px rgba(0,0,0,.18)}
+.login-logo{text-align:center;margin-bottom:22px}
+.login-logo h1{font-size:17px;font-weight:700;color:#4a1660}
+.login-logo p{font-size:12px;color:#6b7280;margin-top:3px}
+.section-title{font-size:16px;font-weight:700;color:#4a1660;margin-bottom:14px;padding-bottom:10px;border-bottom:2px solid #e2e8f0;display:flex;align-items:center;gap:8px}
+.form-group{margin-bottom:13px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.grid-4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px}
+@media(max-width:640px){.grid-2,.grid-3,.grid-4{grid-template-columns:1fr}}
+.summary-table th{background:#4a1660;color:#fff}
+.summary-table td:last-child{text-align:right;font-weight:600}
+.total-row td{background:#f5eefa;font-weight:700;font-size:15px}
+.grand-total td{background:#4a1660;color:#fff;font-size:16px;font-weight:700}
+.tabs{display:flex;gap:4px;border-bottom:2px solid #e2e8f0;margin-bottom:20px;overflow-x:auto}
+.tab{padding:9px 16px;cursor:pointer;font-size:13px;font-weight:500;color:#6b7280;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .2s;white-space:nowrap}
+.tab.active{color:#742582;border-bottom-color:#742582}
+.tab-content{display:none}.tab-content.active{display:block}
+.toggle-check{display:flex;align-items:center;gap:10px;padding:13px 16px;border:1.5px solid #e2e8f0;border-radius:8px;cursor:pointer;transition:all .2s}
+.toggle-check input{width:18px;height:18px;cursor:pointer;accent-color:#742582}
+.toggle-check.checked{border-color:#742582;background:#f5eefa}
+.alert{padding:11px 14px;border-radius:8px;font-size:14px;margin-bottom:12px}
+.alert-info{background:#e9d5f7;color:#4a1660;border:1px solid #c084e8}
+.alert-warning{background:#fef3c7;color:#92400e;border:1px solid #fde68a}
+.alert-success{background:#d1fae5;color:#065f46;border:1px solid #a7f3d0}
+.alert-danger{background:#fee2e2;color:#991b1b;border:1px solid #fecaca}
+.drop-zone{border:2px dashed #c084e8;border-radius:8px;padding:18px;text-align:center;color:#742582;cursor:pointer;background:#f5eefa;transition:all .2s}
+.drop-zone:hover,.drop-zone.dragover{background:#e9d5f7;border-color:#742582}
+.filter-bar{display:flex;align-items:center;gap:12px;padding:10px 14px;background:#f8fafc;border-radius:8px;margin-bottom:12px;flex-wrap:wrap}
+.photo-slot{position:relative;border:2px dashed #c084e8;border-radius:10px;background:#f5eefa;overflow:hidden;cursor:pointer;transition:all .2s;aspect-ratio:4/3;display:flex;align-items:center;justify-content:center}
+.photo-slot:hover{border-color:#742582;background:#e9d5f7}
+.photo-slot.has-img{border-style:solid;border-color:#742582}
+.photo-slot img{width:100%;height:100%;object-fit:cover;display:block}
+.photo-slot .ph{text-align:center;padding:16px;color:#742582;pointer-events:none}
+.photo-slot .ph .phi{font-size:28px;margin-bottom:4px}
+.photo-slot .ph .phl{font-size:12px;font-weight:600}
+.photo-slot .ph .phs{font-size:11px;color:#6b7280;margin-top:2px}
+.photo-slot .prm{position:absolute;top:6px;right:6px;background:rgba(220,38,38,.85);color:#fff;border:none;border-radius:50%;width:24px;height:24px;font-size:13px;cursor:pointer;display:none;align-items:center;justify-content:center}
+.photo-slot.has-img .prm{display:flex}
+.photo-slot input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.pg1{display:grid;grid-template-columns:1fr;max-width:300px}
+.pg2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pea-match{font-size:12px;margin-top:4px;padding:3px 8px;border-radius:4px;display:inline-block}
+.pea-match.found{background:#dcfce7;color:#166534}
+.pea-match.notfound{background:#fef3c7;color:#92400e}
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:flex;align-items:center;justify-content:center;padding:16px}
+.modal{background:#fff;border-radius:12px;padding:26px;width:100%;max-width:520px;box-shadow:0 8px 32px rgba(0,0,0,.2);max-height:90vh;overflow-y:auto}
+.modal-title{font-size:17px;font-weight:700;color:#4a1660;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between}
+.loading-overlay{position:fixed;inset:0;background:rgba(74,22,96,.75);z-index:9999;display:none;flex-direction:column;align-items:center;justify-content:center;color:#fff;gap:14px;font-size:16px}
+.loading-overlay.active{display:flex}
+.spinner{width:44px;height:44px;border:4px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.db-status{display:inline-flex;align-items:center;gap:5px;font-size:11px;padding:3px 9px;border-radius:20px;background:rgba(255,255,255,.15);color:#fff}
+.db-dot{width:7px;height:7px;border-radius:50%;background:#4ade80}
+.db-dot.err{background:#f87171}
+@media print{.navbar,.no-print{display:none!important}.container{padding:0}.card{box-shadow:none;border:1px solid #e2e8f0}body{background:#fff}}
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+</head><body>
+<div id="app">
+<div class="loading-overlay" id="loadingOverlay">
+<div class="spinner"></div>
+<div id="loadingText">กำลังโหลด...</div>
+</div>
+
+<!-- PROFILE MODAL -->
+<div class="modal-bg" id="profileModal" style="display:none">
+<div class="modal">
+<div class="modal-title"><i class="fa fa-user-pen"></i> แก้ไขข้อมูลส่วนตัว <span style="cursor:pointer;color:#9ca3af;font-size:20px" onclick="closeProfile()">x</span></div>
+<div id="profileAlert"></div>
+<div class="grid-2">
+<div class="form-group"><label>ชื่อ-นามสกุล</label><input type="text" id="p_name" placeholder="ชื่อ-นามสกุล"></div>
+<div class="form-group"><label>อีเมล</label><input type="email" id="p_email" placeholder="อีเมล"></div>
+</div>
+<div class="grid-2">
+<div class="form-group"><label>สาขา กฟภ.</label><input type="text" id="p_branch" readonly></div>
+<div class="form-group"><label>ตำแหน่ง</label><input type="text" id="p_position" placeholder="ตำแหน่ง"></div>
+</div>
+<hr style="margin:12px 0;border-color:#e2e8f0">
+<div style="font-weight:600;color:#4a1660;margin-bottom:10px;font-size:13px">เปลี่ยนรหัสผ่าน (เว้นว่างถ้าไม่ต้องการเปลี่ยน)</div>
+<div class="grid-2">
+<div class="form-group"><label>รหัสผ่านใหม่</label><input type="password" id="p_newpass" placeholder="รหัสผ่านใหม่"></div>
+<div class="form-group"><label>ยืนยันรหัสผ่านใหม่</label><input type="password" id="p_confirmpass" placeholder="ยืนยัน"></div>
+</div>
+<div style="display:flex;gap:10px;justify-content:flex-end">
+<button class="btn btn-outline" onclick="closeProfile()">ยกเลิก</button>
+<button class="btn btn-primary" onclick="saveProfile()"><i class="fa fa-floppy-disk"></i> บันทึก</button>
+</div>
+</div></div>
+
+<!-- EDIT RECORD MODAL -->
+<div class="modal-bg" id="editRecordModal" style="display:none">
+<div class="modal" style="max-width:600px">
+<div class="modal-title"><i class="fa fa-pen-to-square"></i> แก้ไขรายการ <span style="cursor:pointer;color:#9ca3af;font-size:20px" onclick="closeEditRecord()">x</span></div>
+<div id="editRecordAlert"></div>
+<div class="grid-2">
+<div class="form-group"><label>กฟภ.สาขา</label><input type="text" id="er_branch" placeholder="กฟภ.สาขา"></div>
+<div class="form-group"><label>PEA.</label><input type="text" id="er_pea" placeholder="หมายเลข PEA"></div>
+</div>
+<div class="grid-2">
+<div class="form-group"><label>ชื่อผู้ใช้ไฟฟ้า</label><input type="text" id="er_customer" placeholder="ชื่อผู้ใช้ไฟฟ้า"></div>
+<div class="form-group"><label>ที่อยู่</label><input type="text" id="er_address" placeholder="ที่อยู่"></div>
+</div>
+<div class="grid-2">
+<div class="form-group"><label>ผู้ให้บริการ</label><input type="text" id="er_provider" placeholder="ชื่อผู้ให้บริการ"></div>
+<div class="form-group"><label>ตำแหน่ง</label><input type="text" id="er_position" placeholder="ตำแหน่ง"></div>
+</div>
+<div class="grid-2">
+<div class="form-group"><label>ผู้รับบริการ</label><input type="text" id="er_receiver" placeholder="ชื่อผู้รับบริการ"></div>
+<div class="form-group"><label>เบอร์โทร</label><input type="text" id="er_phone" placeholder="เบอร์โทร"></div>
+</div>
+<div class="form-group"><label>วันเวลา</label><input type="text" id="er_datetime" placeholder="วันเวลา"></div>
+<input type="hidden" id="er_id">
+<div style="display:flex;gap:10px;justify-content:flex-end;margin-top:4px">
+<button class="btn btn-outline" onclick="closeEditRecord()">ยกเลิก</button>
+<button class="btn btn-primary" onclick="saveEditRecord()"><i class="fa fa-floppy-disk"></i> บันทึก</button>
+</div>
+</div></div>
+
+<!-- FORGOT MODAL -->
+<div class="modal-bg" id="forgotModal" style="display:none">
+<div class="modal" style="max-width:420px">
+<div class="modal-title"><i class="fa fa-key"></i> ลืมรหัสผ่าน <span style="cursor:pointer;color:#9ca3af;font-size:20px" onclick="closeForgot()">x</span></div>
+<div id="forgotAlert"></div>
+<div id="forgotStep1">
+<p style="font-size:13px;color:#6b7280;margin-bottom:14px">กรอกรหัสประจำตัวและอีเมลที่ลงทะเบียนไว้</p>
+<div class="form-group"><label>รหัสประจำตัว</label><input type="text" id="fg_uid" placeholder="รหัสประจำตัว"></div>
+<div class="form-group"><label>อีเมล</label><input type="email" id="fg_email" placeholder="อีเมลที่ลงทะเบียน"></div>
+<button class="btn btn-primary" style="width:100%;justify-content:center" onclick="verifyForgot()">ยืนยันตัวตน</button>
+</div>
+<div id="forgotStep2" style="display:none">
+<div class="alert alert-success">ยืนยันตัวตนสำเร็จ กรุณาตั้งรหัสผ่านใหม่</div>
+<div class="form-group"><label>รหัสผ่านใหม่</label><input type="password" id="fg_newpass" placeholder="รหัสผ่านใหม่"></div>
+<div class="form-group"><label>ยืนยันรหัสผ่านใหม่</label><input type="password" id="fg_confirmpass" placeholder="ยืนยัน"></div>
+<button class="btn btn-success" style="width:100%;justify-content:center" onclick="doResetPassword()"><i class="fa fa-lock"></i>เปลี่ยนรหัสผ่าน</button>
+</div>
+</div></div>
+
+<!-- EDIT USER MODAL -->
+<div class="modal-bg" id="editUserModal" style="display:none">
+<div class="modal" style="max-width:540px">
+<div class="modal-title"><i class="fa fa-user-gear"></i> แก้ไขข้อมูลผู้ใช้งาน <span style="cursor:pointer;color:#9ca3af;font-size:20px" onclick="closeEditUser()">x</span></div>
+<div id="editUserAlert"></div>
+<div class="grid-2">
+<div class="form-group"><label>ชื่อ-นามสกุล</label><input type="text" id="eu_name" placeholder="ชื่อ-นามสกุล"></div>
+<div class="form-group"><label>รหัสประจำตัว</label><input type="text" id="eu_username" readonly></div>
+</div>
+<div class="grid-2">
+<div class="form-group"><label>อีเมล</label><input type="email" id="eu_email" placeholder="อีเมล"></div>
+<div class="form-group"><label>ตำแหน่ง</label><input type="text" id="eu_position" placeholder="ตำแหน่ง"></div>
+</div>
+<div class="grid-2">
+<div class="form-group" style="position:relative">
+<label>สาขา กฟภ.</label>
+<input type="text" id="eu_branch" placeholder="พิมพ์เพื่อค้นหาสาขา..." oninput="filterEuBranch()" autocomplete="off">
+<div id="euBranchDropdown" style="position:absolute;z-index:50;background:#fff;border:1px solid #c084e8;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,.1);max-height:180px;overflow-y:auto;width:100%;display:none;top:calc(100% - 2px)"></div>
+</div>
+<div class="form-group"><label>บทบาท</label><select id="eu_role"><option value="user">user</option><option value="admin">admin</option></select></div>
+</div>
+<div class="grid-2">
+<div class="form-group"><label>สถานะ</label><select id="eu_status"><option value="approved">อนุมัติแล้ว</option><option value="pending">รออนุมัติ</option><option value="rejected">ปฏิเสธ</option></select></div>
+<div class="form-group"><label>รหัสผ่าน (เว้นว่างถ้าไม่เปลี่ยน)</label><input type="text" id="eu_password" placeholder="รหัสผ่านใหม่"></div>
+</div>
+<input type="hidden" id="eu_id">
+<div style="display:flex;gap:10px;justify-content:flex-end;margin-top:4px">
+<button class="btn btn-outline" onclick="closeEditUser()">ยกเลิก</button>
+<button class="btn btn-primary" onclick="saveEditUser()"><i class="fa fa-floppy-disk"></i> บันทึก</button>
+</div>
+</div></div>
+
+<!-- USER HISTORY MODAL -->
+<div class="modal-bg" id="userHistoryModal" style="display:none">
+<div class="modal" style="max-width:820px">
+<div class="modal-title"><span id="userHistoryTitle">ประวัติ บร.1</span> <span style="cursor:pointer;color:#9ca3af;font-size:20px" onclick="closeUserHistory()">x</span></div>
+<div id="userHistoryContent"></div>
+</div></div>
+
+<!-- LOGIN -->
+<div id="loginPage" class="page active">
+<div class="auth-wrap">
+<div class="login-card">
+<div class="login-logo">
+<img src="images/PEA-Logo.png" alt="PEA" onerror="this.style.display='none'" style="width:150px;height:auto;margin-bottom:10px">
+<h1>การไฟฟ้าส่วนภูมิภาค</h1>
+<p>ระบบค่าบริการงานแก้กระแสไฟฟ้าขัดข้อง (บร.1)</p>
+</div>
+<div id="loginAlert"></div>
+<div class="form-group"><label>รหัสประจำตัว</label><input type="text" id="loginUsername" placeholder="รหัสประจำตัว" autocomplete="username"></div>
+<div class="form-group"><label>รหัสผ่าน</label><input type="password" id="loginPassword" placeholder="รหัสผ่าน" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"></div>
+<button class="btn btn-primary" style="width:100%;justify-content:center;padding:11px" onclick="doLogin()"><i class="fa fa-right-to-bracket"></i> เข้าสู่ระบบ</button>
+<div style="text-align:center;margin-top:10px"><span style="color:#742582;cursor:pointer;font-size:13px" onclick="openForgot()"><i class="fa fa-key"></i> ลืมรหัสผ่าน?</span></div>
+<hr style="margin:16px 0;border-color:#e2e8f0">
+<p style="text-align:center;font-size:13px;color:#6b7280">ยังไม่มีบัญชี? <span style="color:#742582;cursor:pointer;font-weight:600" onclick="showRegister()">สมัครใช้งาน</span></p>
+</div></div></div>
+
+<!-- REGISTER -->
+<div id="registerPage" class="page">
+<div class="auth-wrap">
+<div class="login-card" style="max-width:520px">
+<div class="login-logo">
+<h1 style="font-size:19px">สมัครใช้งานระบบ</h1>
+<p>ผู้ดูแลระบบต้องอนุมัติก่อนเข้าใช้งาน</p>
+</div>
+<div id="regAlert"></div>
+<div class="grid-2">
+<div class="form-group"><label>ชื่อ-นามสกุล *</label><input type="text" id="regName" placeholder="ชื่อ นามสกุล"></div>
+<div class="form-group"><label>รหัสประจำตัว *</label><input type="text" id="regUsername" placeholder="รหัสประจำตัว"></div>
+</div>
+<div class="grid-2">
+<div class="form-group"><label>รหัสผ่าน *</label><input type="password" id="regPassword" placeholder="รหัสผ่าน"></div>
+<div class="form-group"><label>ยืนยันรหัสผ่าน *</label><input type="password" id="regConfirm" placeholder="ยืนยันรหัสผ่าน"></div>
+</div>
+<div class="form-group"><label>อีเมล *</label><input type="email" id="regEmail" placeholder="email@example.com"></div>
+<div class="grid-2">
+<div class="form-group" style="position:relative">
+<label>สาขา กฟภ. *</label>
+<input type="text" id="regBranch" placeholder="พิมพ์เพื่อค้นหาสาขา..." oninput="filterRegBranch()" autocomplete="off">
+<div id="regBranchDropdown" style="position:absolute;z-index:50;background:#fff;border:1px solid #c084e8;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,.1);max-height:180px;overflow-y:auto;width:100%;display:none;top:calc(100% - 2px)"></div>
+</div>
+<div class="form-group"><label>ตำแหน่ง</label><input type="text" id="regPosition" placeholder="เช่น พชง.6 ผปร.กฟส.มจ."></div>
+</div>
+<div style="display:flex;gap:10px">
+<button class="btn btn-outline" style="flex:1;justify-content:center" onclick="showLogin()">ย้อนกลับ</button>
+<button class="btn btn-primary" style="flex:2;justify-content:center" onclick="doRegister()">สมัครใช้งาน</button>
+</div>
+</div></div></div>
+
+<!-- MAIN APP -->
+<div id="mainApp" class="page">
+<nav class="navbar">
+<div class="navbar-brand"><img src="images/PEA-Logo.jpg" alt="PEA" onerror="this.style.display='none'" style="height:36px"> ค่าบริการงานแก้กระแสไฟฟ้าขัดข้อง (บร.1)</div>
+<div class="navbar-nav">
+<span class="db-status"><span class="db-dot" id="dbDot"></span><span id="dbStatusText">DB</span></span>
+<div class="nav-link active" id="navBR1" onclick="switchTab('br1')"><i class="fa fa-file-invoice"></i> บร.1</div>
+<div class="nav-link" id="navHistory" onclick="switchTab('history')"><i class="fa fa-clock-rotate-left"></i> ประวัติ</div>
+<div class="nav-link" id="navAdmin" onclick="switchTab('admin')" style="display:none"><i class="fa fa-gear"></i> Admin</div>
+<div class="nav-link" id="navUser" onclick="openProfile()" style="cursor:pointer"></div>
+<div class="nav-link" onclick="doLogout()" style="color:#fca5a5"><i class="fa fa-right-from-bracket"></i> ออก</div>
+</div>
+</nav>
+<div class="container">
+
+<!-- BR1 FORM -->
+<div id="tabBR1" class="tab-content active">
+<div class="card" style="margin-bottom:18px">
+<div class="section-title"><i class="fa fa-bolt" style="color:#d97706"></i> ค่าบริการงานแก้กระแสไฟฟ้าขัดข้อง (บร.1)</div>
+<div class="grid-2">
+<div class="form-group"><label>กฟภ.สาขา (จากข้อมูล User)</label><input type="text" id="f_branch" readonly></div>
+<div class="form-group"><label>PEA. <span id="peaMatchLabel"></span></label><input type="text" id="f_pea" placeholder="หมายเลข PEA" oninput="onPeaInput()"></div>
+</div>
+<div class="grid-2">
+<div class="form-group"><label>ชื่อผู้ใช้ไฟฟ้า</label><input type="text" id="f_customer" placeholder="ชื่อ-นามสกุลผู้ใช้ไฟฟ้า"><div id="peaHint" style="font-size:12px;color:#166534;margin-top:3px;display:none">ข้อมูลอัตโนมัติจาก PEA</div></div>
+<div class="form-group"><label>ที่อยู่</label><input type="text" id="f_address" placeholder="บ้านเลขที่ ถนน ตำบล อำเภอ จังหวัด"></div>
+</div>
+<div class="grid-2">
+<div class="form-group"><label>พิกัด Lat/Long (อัตโนมัติ)</label><div style="display:flex;gap:8px"><input type="text" id="f_coords" placeholder="กำลังระบุพิกัด..." readonly style="flex:1"><button class="btn btn-outline btn-sm" onclick="getLocation()"><i class="fa fa-location-dot"></i> GPS</button></div></div>
+<div class="form-group"><label>วันเวลาปัจจุบัน</label><div style="display:flex;gap:6px"><input type="text" id="f_datetime_display" placeholder="วันเวลา" style="flex:1" oninput="syncDatetimeFromDisplay()"><button class="btn btn-outline btn-sm" onclick="setNow()"><i class="fa fa-clock"></i> ตอนนี้</button></div><input type="hidden" id="f_datetime"></div>
+</div>
+</div>
+<div class="card" style="margin-bottom:18px">
+<div class="section-title">ส่วนที่ 1 - ปลด-สับอุปกรณ์ตัดตอนแรงสูง</div>
+<label class="toggle-check" id="part1Label"><input type="checkbox" id="part1Check" onchange="calcAll()"><div><div style="font-weight:600">ปลด-สับอุปกรณ์ตัดตอนแรงสูง</div><div style="font-size:13px;color:#6b7280">ค่าบริการ 570.00 บาท</div></div></label>
+</div>
+<div class="card" style="margin-bottom:18px">
+<div class="section-title">ส่วนที่ 2 - ค่าบริการตรวจสอบ</div>
+<div style="display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap">
+<div style="flex:1;min-width:150px"><label>เวลาที่ปฏิบัติงาน (นาที)</label><input type="number" id="part2Minutes" min="0" oninput="calcAll()"></div>
+<div style="flex:1;min-width:150px"><label>อัตราค่าบริการ</label><input type="text" value="9.50 บาท/นาที" readonly></div>
+<div style="flex:1;min-width:150px"><label>ค่าบริการตรวจสอบรวม</label><input type="text" id="part2Total" readonly style="font-weight:600;color:#4a1660"></div>
+</div></div>
+<div class="card" style="margin-bottom:18px">
+<div class="section-title">ส่วนที่ 3 - ค่าอุปกรณ์ในการแก้ไข</div>
+<div style="overflow-x:auto">
+<table><thead><tr><th>รหัสพัสดุ</th><th>รายละเอียด</th><th>หน่วย</th><th>จำนวน</th><th>ราคากลาง</th><th>ราคารวม (x131%x115%)</th><th></th></tr></thead><tbody id="matBody"></tbody></table>
+</div>
+<button class="btn btn-outline btn-sm" style="margin-top:10px" onclick="addMat()">+ เพิ่มรายการพัสดุ</button>
+<div style="text-align:right;margin-top:10px;font-weight:700;font-size:15px;color:#4a1660">รวมค่าอุปกรณ์: <span id="part3Total">0.00</span> บาท</div>
+</div>
+<div class="card" style="margin-bottom:18px">
+<div class="section-title">ตารางสรุปรายละเอียด</div>
+<div style="overflow-x:auto">
+<table class="summary-table"><thead><tr><th>ลำดับที่</th><th>รายการ</th><th style="text-align:right">จำนวนเงิน (บาท)</th></tr></thead><tbody>
+<tr><td>1</td><td>ปลด-สับอุปกรณ์ตัดตอนแรงสูง</td><td id="s1" style="text-align:right">0.00</td></tr>
+<tr><td>2</td><td>ค่าบริการตรวจสอบ</td><td id="s2" style="text-align:right">0.00</td></tr>
+<tr><td>3</td><td>ค่าอุปกรณ์ในการแก้ไข</td><td id="s3" style="text-align:right">0.00</td></tr>
+<tr class="total-row"><td colspan="2" style="text-align:right;font-weight:700">ยอดรวม</td><td id="sTotal" style="text-align:right">0.00</td></tr>
+<tr class="total-row"><td colspan="2" style="text-align:right">ภาษีมูลค่าเพิ่ม 7%</td><td id="sVat" style="text-align:right">0.00</td></tr>
+<tr class="grand-total"><td colspan="2" style="text-align:right">รวมทั้งสิ้น</td><td id="sGrand" style="text-align:right">0.00</td></tr>
+</tbody></table></div></div>
+<div class="card" style="margin-bottom:18px">
+<div class="section-title"><i class="fa fa-camera"></i> ภาพถ่ายประกอบการปฏิบัติงาน</div>
+<div style="margin-bottom:18px">
+<div style="font-weight:600;color:#4a1660;margin-bottom:8px"><span style="background:#e9d5f7;color:#4a1660;padding:2px 9px;border-radius:20px;font-size:11px">1 รูป</span> PEA. มิเตอร์</div>
+<div class="pg1"><div class="photo-slot" id="slot_meter_0" onclick="triggerPhoto('meter',0)"><div class="ph"><div class="phl">PEA. มิเตอร์</div><div class="phs">คลิกหรือถ่ายรูป</div></div><input type="file" accept="image/*" capture="environment" onchange="handlePhoto('meter',0,this)" onclick="event.stopPropagation()"><button class="prm" onclick="removePhoto('meter',0,event)">x</button></div></div>
+</div>
+<div style="margin-bottom:18px">
+<div style="font-weight:600;color:#4a1660;margin-bottom:8px"><span style="background:#d1fae5;color:#065f46;padding:2px 9px;border-radius:20px;font-size:11px">2 รูป</span> ภาพถ่ายการปฏิบัติงาน</div>
+<div class="pg2">
+<div class="photo-slot" id="slot_work_0" onclick="triggerPhoto('work',0)"><div class="ph"><div class="phl">ปฏิบัติงาน 1</div><div class="phs">คลิกหรือถ่ายรูป</div></div><input type="file" accept="image/*" capture="environment" onchange="handlePhoto('work',0,this)" onclick="event.stopPropagation()"><button class="prm" onclick="removePhoto('work',0,event)">x</button></div>
+<div class="photo-slot" id="slot_work_1" onclick="triggerPhoto('work',1)"><div class="ph"><div class="phl">ปฏิบัติงาน 2</div><div class="phs">คลิกหรือถ่ายรูป</div></div><input type="file" accept="image/*" capture="environment" onchange="handlePhoto('work',1,this)" onclick="event.stopPropagation()"><button class="prm" onclick="removePhoto('work',1,event)">x</button></div>
+</div></div>
+<div>
+<div style="font-weight:600;color:#4a1660;margin-bottom:8px"><span style="background:#fef9c3;color:#854d0e;padding:2px 9px;border-radius:20px;font-size:11px">2 รูป</span> ภาพถ่ายอุปกรณ์ที่ใช้แก้ไข</div>
+<div class="pg2">
+<div class="photo-slot" id="slot_equip_0" onclick="triggerPhoto('equip',0)"><div class="ph"><div class="phl">อุปกรณ์ 1</div><div class="phs">คลิกหรือถ่ายรูป</div></div><input type="file" accept="image/*" capture="environment" onchange="handlePhoto('equip',0,this)" onclick="event.stopPropagation()"><button class="prm" onclick="removePhoto('equip',0,event)">x</button></div>
+<div class="photo-slot" id="slot_equip_1" onclick="triggerPhoto('equip',1)"><div class="ph"><div class="phl">อุปกรณ์ 2</div><div class="phs">คลิกหรือถ่ายรูป</div></div><input type="file" accept="image/*" capture="environment" onchange="handlePhoto('equip',1,this)" onclick="event.stopPropagation()"><button class="prm" onclick="removePhoto('equip',1,event)">x</button></div>
+</div></div>
+</div>
+<div class="card" style="margin-bottom:18px">
+<div class="section-title">ลายมือชื่อ</div>
+<div class="grid-2">
+<div><div style="font-weight:600;margin-bottom:10px;color:#4a1660">ผู้ให้บริการ</div>
+<div class="form-group"><label>ชื่อผู้ให้บริการ</label><input type="text" id="f_provider" placeholder="ชื่อผู้ให้บริการ"></div>
+<div class="form-group"><label>ตำแหน่ง</label><input type="text" id="f_position" placeholder="ตำแหน่ง"></div></div>
+<div><div style="font-weight:600;margin-bottom:10px;color:#4a1660">ผู้รับบริการ</div>
+<div class="form-group"><label>ชื่อผู้รับบริการ</label><input type="text" id="f_receiver" placeholder="ชื่อผู้รับบริการ"></div>
+<div class="form-group"><label>เบอร์โทรศัพท์</label><input type="text" id="f_phone" placeholder="เบอร์โทรศัพท์"></div></div>
+</div></div>
+<div class="no-print" style="display:flex;gap:10px;justify-content:flex-end;margin-bottom:28px">
+<button class="btn btn-outline" onclick="clearForm()"><i class="fa fa-eraser"></i> ล้างแบบฟอร์ม</button>
+<button class="btn btn-outline" onclick="window.print()"><i class="fa fa-print"></i> พิมพ์</button>
+<button class="btn btn-success" onclick="saveRecord()"><i class="fa fa-floppy-disk"></i> บันทึกรายการ</button>
+</div></div>
+
+<!-- HISTORY -->
+<div id="tabHistory" class="tab-content">
+<div class="card">
+<div class="section-title"><i class="fa fa-folder-open"></i> ประวัติรายการ บร.1</div>
+<div style="margin-bottom:12px;display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+<input type="text" id="histSearch" placeholder="ค้นหา PEA, ชื่อ, สาขา, ผู้บันทึก..." placeholder="ค้นหา PEA, ชื่อ, สาขา..." style="max-width:320px" oninput="renderHistory()">
+<span id="histCount" style="font-size:13px;color:#6b7280;margin-left:auto"></span>
+</div>
+<div id="historyTable"></div>
+</div></div>
+
+<!-- ADMIN -->
+<div id="tabAdmin" class="tab-content">
+<div class="tabs" id="adminTabs">
+<div class="tab active" onclick="switchAdminTab('users')"><i class="fa fa-users"></i> ผู้ใช้งาน</div>
+<div class="tab" onclick="switchAdminTab('branches')"><i class="fa fa-building"></i> กฟฟ./สาขา</div>
+<div class="tab" onclick="switchAdminTab('customers')"><i class="fa fa-house-user"></i> ผู้ใช้ไฟฟ้า</div>
+<div class="tab" onclick="switchAdminTab('materials')"><i class="fa fa-box"></i> พัสดุ</div>
+</div>
+<div id="atUsers" class="tab-content active"><div class="card"><div class="section-title"><i class="fa fa-users"></i> รายการผู้ใช้งาน</div><div id="userTable"></div></div></div>
+<div id="atBranches" class="tab-content">
+<div class="card" style="margin-bottom:14px">
+<div class="section-title"><i class="fa fa-plus"></i> เพิ่ม/แก้ไข กฟฟ./สาขา</div>
+<div class="grid-3">
+<div class="form-group"><label>ชื่อ กฟฟ./สาขา *</label><input type="text" id="br_name" placeholder="เช่น กฟฟ.เมืองขอนแก่น"></div>
+<div class="form-group"><label>จังหวัด *</label><select id="br_province"><option value="">-- เลือกจังหวัด --</option></select></div>
+<div class="form-group"><label>เขต *</label><select id="br_zone"><option value="">-- เลือก --</option><option>น.1</option><option>น.2</option><option>น.3</option><option>ฉ.1</option><option>ฉ.2</option><option>ฉ.3</option><option>ก.1</option><option>ก.2</option><option>ก.3</option><option>ต.1</option><option>ต.2</option><option>ต.3</option><option>สำนักงานใหญ่</option></select></div>
+</div>
+<div style="display:flex;gap:10px"><button class="btn btn-primary btn-sm" onclick="saveBranch()">บันทึก</button><button class="btn btn-outline btn-sm" onclick="clearBranchForm()">ล้าง</button></div>
+<input type="hidden" id="br_editId">
+</div>
+<div class="card" style="margin-bottom:14px">
+<div class="section-title"><i class="fa fa-file-import"></i> นำเข้า กฟฟ./สาขา จาก CSV</div>
+<div class="alert alert-info"><b>รูปแบบ:</b> ชื่อ, จังหวัด, เขต</div>
+<div class="drop-zone" onclick="document.getElementById('csvBrFile').click()" ondragover="event.preventDefault();this.classList.add('dragover')" ondragleave="this.classList.remove('dragover')" ondrop="handleBrCsvDrop(event)"><div style="font-weight:600">คลิกเพื่อเลือกไฟล์ .csv</div></div>
+<input type="file" id="csvBrFile" accept=".csv" style="display:none" onchange="handleBrCsvFile(this)">
+<div id="csvBrPreview" style="margin-top:12px"></div>
+</div>
+<div class="card"><div class="section-title"><i class="fa fa-building"></i> รายการ กฟฟ./สาขาทั้งหมด</div><div style="margin-bottom:10px"><input type="text" id="brSearch" placeholder="ค้นหาชื่อสาขา..." placeholder="ค้นหาสาขา..." style="max-width:300px" oninput="renderBranches()"></div><div id="branchTable"></div></div>
+</div>
+<div id="atCustomers" class="tab-content">
+<div class="card" style="margin-bottom:14px">
+<div class="section-title"><i class="fa fa-plus"></i> เพิ่ม/แก้ไขผู้ใช้ไฟฟ้า</div>
+<div class="grid-2">
+<div class="form-group"><label>PEA. *</label><input type="text" id="c_pea" placeholder="เช่น 010000123456"></div>
+<div class="form-group"><label>ชื่อผู้ใช้ไฟฟ้า *</label><input type="text" id="c_name" placeholder="ชื่อ-นามสกุล"></div>
+</div>
+<div class="grid-2">
+<div class="form-group"><label>ที่อยู่</label><input type="text" id="c_address" placeholder="ที่อยู่"></div>
+<div class="form-group"><label>กฟภ.สาขา</label><input type="text" id="c_branch" placeholder="สาขาที่รับผิดชอบ"></div>
+</div>
+<div style="display:flex;gap:10px"><button class="btn btn-primary btn-sm" onclick="saveCustomer()">บันทึก</button><button class="btn btn-outline btn-sm" onclick="clearCustomerForm()">ล้าง</button></div>
+<input type="hidden" id="c_editId">
+</div>
+<div class="card" style="margin-bottom:14px">
+<div class="section-title"><i class="fa fa-file-import"></i> นำเข้าผู้ใช้ไฟฟ้าจาก CSV</div>
+<div class="alert alert-info"><b>รูปแบบ:</b> PEA, ชื่อ, ที่อยู่, สาขา</div>
+<div class="drop-zone" onclick="document.getElementById('csvCustFile').click()" ondragover="event.preventDefault();this.classList.add('dragover')" ondragleave="this.classList.remove('dragover')" ondrop="handleCustCsvDrop(event)"><div style="font-weight:600">คลิกเพื่อเลือกไฟล์ .csv</div></div>
+<input type="file" id="csvCustFile" accept=".csv" style="display:none" onchange="handleCustCsvFile(this)">
+<div id="csvCustPreview" style="margin-top:12px"></div>
+</div>
+<div class="card"><div class="section-title"><i class="fa fa-house-user"></i> รายการผู้ใช้ไฟฟ้าทั้งหมด</div><div style="margin-bottom:10px"><input type="text" id="custSearch" placeholder="ค้นหา PEA หรือชื่อ..." placeholder="ค้นหา PEA หรือชื่อ..." style="max-width:300px" oninput="renderCustomers()"></div><div id="customerTable"></div></div>
+</div>
+<div id="atMaterials" class="tab-content">
+<div class="card" style="margin-bottom:14px">
+<div class="section-title"><i class="fa fa-plus"></i> เพิ่ม/แก้ไขพัสดุ</div>
+<div class="grid-4">
+<div class="form-group"><label>รหัสพัสดุ *</label><input type="text" id="m_code" placeholder="เช่น PEA-001"></div>
+<div class="form-group"><label>รายละเอียด *</label><input type="text" id="m_desc" placeholder="ชื่อพัสดุ"></div>
+<div class="form-group"><label>หน่วยนับ</label><input type="text" id="m_unit" placeholder="เช่น ม., อัน, ชุด"></div>
+<div class="form-group"><label>ราคากลาง (บาท) *</label><input type="number" id="m_price" placeholder="0.00" min="0" step="0.01"></div>
+</div>
+<div class="grid-2" style="margin-bottom:12px">
+<div class="form-group"><label>ประเภท</label><input type="text" id="m_type" placeholder="เช่น สายไฟ, อุปกรณ์ตัดตอน"></div>
+<div class="form-group"><label>ใช้ในงานแก้ไฟ</label><select id="m_inuse"><option value="ใช้">ใช้</option><option value="ไม่ใช้">ไม่ใช้</option></select></div>
+</div>
+<div style="display:flex;gap:10px"><button class="btn btn-primary btn-sm" onclick="saveMaterial()">บันทึก</button><button class="btn btn-outline btn-sm" onclick="clearMaterialForm()">ล้าง</button></div>
+<input type="hidden" id="m_editId">
+</div>
+<div class="card" style="margin-bottom:14px">
+<div class="section-title"><i class="fa fa-file-import"></i> นำเข้าพัสดุจาก CSV</div>
+<div class="alert alert-info"><b>รูปแบบ:</b> รหัส, รายละเอียด, หน่วยนับ, ราคา, ประเภท, ใช้งาน</div>
+<div class="drop-zone" onclick="document.getElementById('csvFile').click()" ondragover="event.preventDefault();this.classList.add('dragover')" ondragleave="this.classList.remove('dragover')" ondrop="handleCsvDrop(event)"><div style="font-weight:600">คลิกเพื่อเลือกไฟล์ .csv</div></div>
+<input type="file" id="csvFile" accept=".csv" style="display:none" onchange="handleCsvFile(this)">
+<div id="csvPreview" style="margin-top:12px"></div>
+</div>
+<div class="card"><div class="section-title"><i class="fa fa-box"></i> รายการพัสดุทั้งหมด</div>
+<div class="filter-bar">
+<label style="margin:0;font-weight:600;color:#4a1660">แสดง:</label>
+<label style="display:flex;align-items:center;gap:5px;margin:0;cursor:pointer"><input type="radio" name="matFilter" value="all" checked onchange="renderMaterials()"> ทั้งหมด</label>
+<label style="display:flex;align-items:center;gap:5px;margin:0;cursor:pointer"><input type="radio" name="matFilter" value="ใช้" onchange="renderMaterials()"> ใช้ในงานแก้ไฟ</label>
+<label style="display:flex;align-items:center;gap:5px;margin:0;cursor:pointer"><input type="radio" name="matFilter" value="ไม่ใช้" onchange="renderMaterials()"> ไม่ใช้</label>
+<span id="matCount" style="margin-left:auto;font-size:13px;color:#6b7280"></span>
+</div>
+<div id="materialTable"></div></div>
+</div>
+</div>
+</div><!-- /container -->
+</div><!-- /mainApp -->
+<div style="text-align:center;padding:16px 0 20px;font-size:13px;color:#9ca3af;background:#f0f4f8;border-top:1px solid #e2e8f0" class="no-print">
+Dev : ส.อ.ภูวณัตย์ ศรีจันทร์ | พชง.6 ผปร.กฟส.มัญจาคีรี
+</div>
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script src="br1.js"></script>
+</div><!-- /app -->
+</body>
+</html>

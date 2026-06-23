@@ -1,0 +1,1280 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ค่าบริการงานแก้กระแสไฟฟ้าขัดข้อง (บร.1)</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Sarabun',sans-serif;background:#f0f4f8;color:#1a202c;font-size:15px}
+input,select,textarea,button{font-family:inherit;font-size:14px}
+input[type=text],input[type=password],input[type=number],input[type=email],select,textarea{width:100%;padding:8px 12px;border:1px solid #cbd5e0;border-radius:6px;background:#fff;color:#1a202c;outline:none;transition:border .2s}
+input:focus,select:focus,textarea:focus{border-color:#742582;box-shadow:0 0 0 3px rgba(116,37,130,.15)}
+input[readonly]{background:#f8fafc!important;color:#4a5568}
+label{font-size:13px;color:#4a5568;display:block;margin-bottom:4px;font-weight:500}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:6px;border:none;cursor:pointer;font-size:14px;font-weight:600;transition:all .2s}
+.btn-primary{background:#742582;color:#fff}.btn-primary:hover{background:#5c1c6e}
+.btn-success{background:#16a34a;color:#fff}.btn-success:hover{background:#15803d}
+.btn-danger{background:#dc2626;color:#fff}.btn-danger:hover{background:#b91c1c}
+.btn-warning{background:#d97706;color:#fff}.btn-warning:hover{background:#b45309}
+.btn-outline{background:#fff;color:#374151;border:1px solid #d1d5db}.btn-outline:hover{background:#f9fafb}
+.btn-sm{padding:5px 12px;font-size:13px}
+.card{background:#fff;border-radius:10px;box-shadow:0 1px 4px rgba(0,0,0,.08);padding:20px}
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600}
+.badge-green{background:#dcfce7;color:#166534}.badge-yellow{background:#fef9c3;color:#854d0e}
+.badge-red{background:#fee2e2;color:#991b1b}.badge-blue{background:#e9d5f7;color:#4a1660}
+.badge-gray{background:#f3f4f6;color:#4b5563}
+table{width:100%;border-collapse:collapse}
+th{background:#f8fafc;font-size:13px;font-weight:600;color:#4a5568;padding:10px 12px;text-align:left;border-bottom:1px solid #e2e8f0}
+td{padding:10px 12px;border-bottom:1px solid #f1f5f9;font-size:14px;vertical-align:middle}
+tr:hover td{background:#f8fafc}
+.page{display:none}.page.active{display:block}
+#app{min-height:100vh}
+.navbar{background:#4a1660;color:#fff;padding:0 16px;display:flex;align-items:center;justify-content:space-between;height:56px;position:sticky;top:0;z-index:100}
+.navbar-brand{font-size:15px;font-weight:700;color:#fff;display:flex;align-items:center;gap:8px}
+.navbar-nav{display:flex;align-items:center;gap:4px;flex-wrap:wrap}
+.nav-link{color:rgba(255,255,255,.8);padding:5px 12px;border-radius:6px;font-size:13px;cursor:pointer;transition:all .2s}
+.nav-link:hover,.nav-link.active{background:rgba(255,255,255,.15);color:#fff}
+.container{max-width:1160px;margin:0 auto;padding:24px 16px}
+.auth-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#4a1660 0%,#742582 100%)}
+.login-card{background:#fff;border-radius:14px;padding:36px;width:100%;max-width:440px;box-shadow:0 20px 40px rgba(0,0,0,.18)}
+.login-logo{text-align:center;margin-bottom:22px}
+.login-logo .logo-icon{width:54px;height:54px;background:#4a1660;border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px}
+.login-logo h1{font-size:17px;font-weight:700;color:#4a1660}
+.login-logo p{font-size:12px;color:#6b7280;margin-top:3px}
+.section-title{font-size:16px;font-weight:700;color:#4a1660;margin-bottom:14px;padding-bottom:10px;border-bottom:2px solid #e2e8f0;display:flex;align-items:center;gap:8px}
+.form-group{margin-bottom:13px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.grid-4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px}
+@media(max-width:640px){.grid-2,.grid-3,.grid-4{grid-template-columns:1fr}}
+.summary-table th{background:#4a1660;color:#fff}
+.summary-table td:last-child{text-align:right;font-weight:600}
+.total-row td{background:#f5eefa;font-weight:700;font-size:15px}
+.grand-total td{background:#4a1660;color:#fff;font-size:16px;font-weight:700}
+.tabs{display:flex;gap:4px;border-bottom:2px solid #e2e8f0;margin-bottom:20px;overflow-x:auto}
+.tab{padding:9px 16px;cursor:pointer;font-size:13px;font-weight:500;color:#6b7280;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .2s;white-space:nowrap}
+.tab.active{color:#742582;border-bottom-color:#742582}
+.tab-content{display:none}.tab-content.active{display:block}
+.toggle-check{display:flex;align-items:center;gap:10px;padding:13px 16px;border:1.5px solid #e2e8f0;border-radius:8px;cursor:pointer;transition:all .2s}
+.toggle-check input{width:18px;height:18px;cursor:pointer;accent-color:#742582}
+.toggle-check.checked{border-color:#742582;background:#f5eefa}
+.alert{padding:11px 14px;border-radius:8px;font-size:14px;margin-bottom:12px}
+.alert-info{background:#e9d5f7;color:#4a1660;border:1px solid #c084e8}
+.alert-warning{background:#fef3c7;color:#92400e;border:1px solid #fde68a}
+.alert-success{background:#d1fae5;color:#065f46;border:1px solid #a7f3d0}
+.alert-danger{background:#fee2e2;color:#991b1b;border:1px solid #fecaca}
+.drop-zone{border:2px dashed #c084e8;border-radius:8px;padding:18px;text-align:center;color:#742582;cursor:pointer;background:#f5eefa;transition:all .2s}
+.drop-zone:hover,.drop-zone.dragover{background:#e9d5f7;border-color:#742582}
+.filter-bar{display:flex;align-items:center;gap:12px;padding:10px 14px;background:#f8fafc;border-radius:8px;margin-bottom:12px;flex-wrap:wrap}
+.photo-slot{position:relative;border:2px dashed #c084e8;border-radius:10px;background:#f5eefa;overflow:hidden;cursor:pointer;transition:all .2s;aspect-ratio:4/3;display:flex;align-items:center;justify-content:center}
+.photo-slot:hover{border-color:#742582;background:#e9d5f7}
+.photo-slot.has-img{border-style:solid;border-color:#742582}
+.photo-slot img{width:100%;height:100%;object-fit:cover;display:block}
+.photo-slot .ph{text-align:center;padding:16px;color:#742582;pointer-events:none}
+.photo-slot .ph .phi{font-size:28px;margin-bottom:4px}
+.photo-slot .ph .phl{font-size:12px;font-weight:600}
+.photo-slot .ph .phs{font-size:11px;color:#6b7280;margin-top:2px}
+.photo-slot .prm{position:absolute;top:6px;right:6px;background:rgba(220,38,38,.85);color:#fff;border:none;border-radius:50%;width:24px;height:24px;font-size:13px;cursor:pointer;display:none;align-items:center;justify-content:center}
+.photo-slot.has-img .prm{display:flex}
+.photo-slot input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.pg1{display:grid;grid-template-columns:1fr;max-width:300px}
+.pg2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pea-match{font-size:12px;margin-top:4px;padding:3px 8px;border-radius:4px;display:inline-block}
+.pea-match.found{background:#dcfce7;color:#166534}
+.pea-match.notfound{background:#fef3c7;color:#92400e}
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:flex;align-items:center;justify-content:center;padding:16px}
+.modal{background:#fff;border-radius:12px;padding:26px;width:100%;max-width:520px;box-shadow:0 8px 32px rgba(0,0,0,.2);max-height:90vh;overflow-y:auto}
+.modal-title{font-size:17px;font-weight:700;color:#4a1660;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between}
+.loading-overlay{position:fixed;inset:0;background:rgba(74,22,96,.75);z-index:9999;display:none;flex-direction:column;align-items:center;justify-content:center;color:#fff;gap:14px;font-size:16px}
+.loading-overlay.active{display:flex}
+.spinner{width:44px;height:44px;border:4px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.gas-status{display:inline-flex;align-items:center;gap:5px;font-size:11px;padding:3px 9px;border-radius:20px;background:rgba(255,255,255,.15);color:#fff}
+.gas-dot{width:7px;height:7px;border-radius:50%;background:#4ade80}
+.gas-dot.err{background:#f87171}
+@media print{.navbar,.no-print{display:none!important}.container{padding:0}.card{box-shadow:none;border:1px solid #e2e8f0}body{background:#fff}}
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<div id="app">
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="spinner"></div>
+  <div id="loadingText">กำลังโหลด...</div>
+</div>
+<!-- PROFILE MODAL -->
+<div class="modal-bg" id="profileModal" style="display:none">
+  <div class="modal">
+    <div class="modal-title">👤 แก้ไขข้อมูลส่วนตัว <span style="cursor:pointer;color:#9ca3af;font-size:20px" onclick="closeProfile()">✕</span></div>
+    <div id="profileAlert"></div>
+    <div class="grid-2">
+      <div class="form-group"><label>ชื่อ-นามสกุล</label><input type="text" id="p_name"></div>
+      <div class="form-group"><label>อีเมล</label><input type="email" id="p_email"></div>
+    </div>
+    <div class="grid-2">
+      <div class="form-group"><label>สาขา กฟภ. <span style="color:#9ca3af;font-size:11px">(อัตโนมัติ)</span></label><input type="text" id="p_branch" readonly></div>
+      <div class="form-group"><label>ตำแหน่ง</label><input type="text" id="p_position"></div>
+    </div>
+    <hr style="margin:12px 0;border-color:#e2e8f0">
+    <div style="font-weight:600;color:#4a1660;margin-bottom:10px;font-size:13px">🔑 เปลี่ยนรหัสผ่าน (เว้นว่างถ้าไม่ต้องการเปลี่ยน)</div>
+    <div class="grid-2">
+      <div class="form-group"><label>รหัสผ่านใหม่</label><input type="password" id="p_newpass" placeholder="รหัสผ่านใหม่"></div>
+      <div class="form-group"><label>ยืนยันรหัสผ่านใหม่</label><input type="password" id="p_confirmpass" placeholder="ยืนยัน"></div>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:flex-end">
+      <button class="btn btn-outline" onclick="closeProfile()">ยกเลิก</button>
+      <button class="btn btn-primary" onclick="saveProfile()">💾 บันทึก</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT RECORD MODAL -->
+<div class="modal-bg" id="editRecordModal" style="display:none">
+  <div class="modal" style="max-width:600px">
+    <div class="modal-title">✏️ แก้ไขรายการ <span style="cursor:pointer;color:#9ca3af;font-size:20px" onclick="closeEditRecord()">✕</span></div>
+    <div id="editRecordAlert"></div>
+    <div class="grid-2">
+      <div class="form-group"><label>กฟภ.สาขา</label><input type="text" id="er_branch"></div>
+      <div class="form-group"><label>PEA.</label><input type="text" id="er_pea"></div>
+    </div>
+    <div class="grid-2">
+      <div class="form-group"><label>ชื่อผู้ใช้ไฟฟ้า</label><input type="text" id="er_customer"></div>
+      <div class="form-group"><label>ที่อยู่</label><input type="text" id="er_address"></div>
+    </div>
+    <div class="grid-2">
+      <div class="form-group"><label>ผู้ให้บริการ</label><input type="text" id="er_provider"></div>
+      <div class="form-group"><label>ตำแหน่ง</label><input type="text" id="er_position"></div>
+    </div>
+    <div class="grid-2">
+      <div class="form-group"><label>ผู้รับบริการ</label><input type="text" id="er_receiver"></div>
+      <div class="form-group"><label>เบอร์โทร</label><input type="text" id="er_phone"></div>
+    </div>
+    <div class="form-group"><label>วันเวลา</label><input type="text" id="er_datetime"></div>
+    <input type="hidden" id="er_id">
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:4px">
+      <button class="btn btn-outline" onclick="closeEditRecord()">ยกเลิก</button>
+      <button class="btn btn-primary" onclick="saveEditRecord()">💾 บันทึก</button>
+    </div>
+  </div>
+</div>
+
+<!-- FORGOT PASSWORD MODAL -->
+<div class="modal-bg" id="forgotModal" style="display:none">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-title">🔑 ลืมรหัสผ่าน <span style="cursor:pointer;color:#9ca3af;font-size:20px" onclick="closeForgot()">✕</span></div>
+    <div id="forgotAlert"></div>
+    <div id="forgotStep1">
+      <p style="font-size:13px;color:#6b7280;margin-bottom:14px">กรอกรหัสประจำตัวและอีเมลที่ลงทะเบียนไว้เพื่อยืนยันตัวตน</p>
+      <div class="form-group"><label>รหัสประจำตัว</label><input type="text" id="fg_uid" placeholder="รหัสประจำตัว"></div>
+      <div class="form-group"><label>อีเมล</label><input type="email" id="fg_email" placeholder="อีเมลที่ลงทะเบียน"></div>
+      <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="verifyForgot()">ยืนยันตัวตน</button>
+    </div>
+    <div id="forgotStep2" style="display:none">
+      <div class="alert alert-success">✅ ยืนยันตัวตนสำเร็จ กรุณาตั้งรหัสผ่านใหม่</div>
+      <div class="form-group"><label>รหัสผ่านใหม่</label><input type="password" id="fg_newpass" placeholder="รหัสผ่านใหม่"></div>
+      <div class="form-group"><label>ยืนยันรหัสผ่านใหม่</label><input type="password" id="fg_confirmpass" placeholder="ยืนยัน"></div>
+      <button class="btn btn-success" style="width:100%;justify-content:center" onclick="doResetPassword()">🔒 เปลี่ยนรหัสผ่าน</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT USER MODAL -->
+<div class="modal-bg" id="editUserModal" style="display:none">
+  <div class="modal" style="max-width:540px">
+    <div class="modal-title">✏️ แก้ไขข้อมูลผู้ใช้งาน <span style="cursor:pointer;color:#9ca3af;font-size:20px" onclick="closeEditUser()">✕</span></div>
+    <div id="editUserAlert"></div>
+    <div class="grid-2">
+      <div class="form-group"><label>ชื่อ-นามสกุล</label><input type="text" id="eu_name"></div>
+      <div class="form-group"><label>รหัสประจำตัว</label><input type="text" id="eu_username" readonly style="background:#f8fafc"></div>
+    </div>
+    <div class="grid-2">
+      <div class="form-group"><label>อีเมล</label><input type="email" id="eu_email"></div>
+      <div class="form-group"><label>ตำแหน่ง</label><input type="text" id="eu_position"></div>
+    </div>
+    <div class="grid-2">
+      <div class="form-group" style="position:relative">
+        <label>สาขา กฟภ.</label>
+        <input type="text" id="eu_branch" placeholder="พิมพ์เพื่อค้นหาสาขา..." oninput="filterEuBranch()" autocomplete="off">
+        <div id="euBranchDropdown" style="position:absolute;z-index:50;background:#fff;border:1px solid #c084e8;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,.1);max-height:180px;overflow-y:auto;width:100%;display:none;top:calc(100% - 2px);left:0"></div>
+      </div>
+      <div class="form-group"><label>บทบาท</label><select id="eu_role"><option value="user">user</option><option value="admin">admin</option></select></div>
+    </div>
+    <div class="grid-2">
+      <div class="form-group"><label>สถานะ</label>
+        <select id="eu_status"><option value="approved">อนุมัติแล้ว</option><option value="pending">รออนุมัติ</option><option value="rejected">ปฏิเสธ</option></select>
+      </div>
+      <div class="form-group"><label>รหัสผ่าน <span style="color:#9ca3af;font-size:11px">(เว้นว่างถ้าไม่เปลี่ยน)</span></label><input type="text" id="eu_password" placeholder="รหัสผ่านใหม่"></div>
+    </div>
+    <input type="hidden" id="eu_id">
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:4px">
+      <button class="btn btn-outline" onclick="closeEditUser()">ยกเลิก</button>
+      <button class="btn btn-primary" onclick="saveEditUser()">💾 บันทึก</button>
+    </div>
+  </div>
+</div>
+
+<!-- USER HISTORY MODAL -->
+<div class="modal-bg" id="userHistoryModal" style="display:none">
+  <div class="modal" style="max-width:820px">
+    <div class="modal-title"><span id="userHistoryTitle">ประวัติ บร.1</span> <span style="cursor:pointer;color:#9ca3af;font-size:20px" onclick="closeUserHistory()">✕</span></div>
+    <div id="userHistoryContent"></div>
+  </div>
+</div>
+<!-- LOGIN -->
+<div id="loginPage" class="page active">
+  <div class="auth-wrap"><div class="login-card">
+    <div class="login-logo">
+      <div class="logo-icon"><img src="images/PEA-Logo.jpg" alt="PEA" onerror="this.style.display='none'" style="width:150px;height:auto;"></div>
+      <h1>การไฟฟ้าส่วนภูมิภาค</h1>
+      <p>ระบบค่าบริการงานแก้กระแสไฟฟ้าขัดข้อง (บร.1)</p>
+    </div>
+    <div id="loginAlert"></div>
+    <div class="form-group"><label>รหัสประจำตัว</label><input type="text" id="loginUsername" placeholder="รหัสประจำตัว" autocomplete="username"></div>
+    <div class="form-group"><label>รหัสผ่าน</label><input type="password" id="loginPassword" placeholder="รหัสผ่าน" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"></div>
+    <button class="btn btn-primary" style="width:100%;justify-content:center;padding:11px" onclick="doLogin()">เข้าสู่ระบบ</button>
+    <div style="text-align:center;margin-top:10px"><span style="color:#742582;cursor:pointer;font-size:13px" onclick="openForgot()">🔑 ลืมรหัสผ่าน?</span></div>
+    <hr style="margin:16px 0;border-color:#e2e8f0">
+    <p style="text-align:center;font-size:13px;color:#6b7280">ยังไม่มีบัญชี? <span style="color:#742582;cursor:pointer;font-weight:600" onclick="showRegister()">สมัครใช้งาน</span></p>
+  </div></div>
+</div>
+
+<!-- REGISTER -->
+<div id="registerPage" class="page">
+  <div class="auth-wrap"><div class="login-card" style="max-width:520px">
+    <div class="login-logo"><h1 style="font-size:19px">สมัครใช้งานระบบ</h1><p>ผู้ดูแลระบบต้องอนุมัติก่อนเข้าใช้งาน</p></div>
+    <div id="regAlert"></div>
+    <div class="grid-2">
+      <div class="form-group"><label>ชื่อ-นามสกุล *</label><input type="text" id="regName" placeholder="ชื่อ นามสกุล"></div>
+      <div class="form-group"><label>รหัสประจำตัว *</label><input type="text" id="regUsername" placeholder="รหัสประจำตัว"></div>
+    </div>
+    <div class="grid-2">
+      <div class="form-group"><label>รหัสผ่าน *</label><input type="password" id="regPassword" placeholder="รหัสผ่าน"></div>
+      <div class="form-group"><label>ยืนยันรหัสผ่าน *</label><input type="password" id="regConfirm" placeholder="ยืนยัน"></div>
+    </div>
+    <div class="form-group"><label>อีเมล *</label><input type="email" id="regEmail" placeholder="email@example.com"></div>
+    <div class="grid-2" style="position:relative">
+      <div class="form-group" style="position:relative">
+        <label>สาขา กฟภ. *</label>
+        <input type="text" id="regBranch" placeholder="พิมพ์เพื่อค้นหาสาขา..." oninput="filterRegBranch()" autocomplete="off">
+        <div id="regBranchDropdown" style="position:absolute;z-index:50;background:#fff;border:1px solid #c084e8;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,.1);max-height:180px;overflow-y:auto;width:100%;display:none;top:calc(100% - 2px);left:0"></div>
+        <div style="font-size:11px;color:#6b7280;margin-top:3px">พิมพ์เพื่อค้นหาแล้วเลือก</div>
+      </div>
+      <div class="form-group"><label>ตำแหน่ง</label><input type="text" id="regPosition" placeholder="เช่น พชง.6 ผปร.กฟส.มจ."></div>
+    </div>
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-outline" style="flex:1;justify-content:center" onclick="showLogin()">← ย้อนกลับ</button>
+      <button class="btn btn-primary" style="flex:2;justify-content:center" onclick="doRegister()">สมัครใช้งาน</button>
+    </div>
+  </div></div>
+</div>
+
+<!-- MAIN APP -->
+<div id="mainApp" class="page">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <img src="images/PEA-Logo.jpg" alt="PEA" onerror="this.style.display='none'" style="width:100px;height:auto;">
+      ค่าบริการงานแก้กระแสไฟฟ้าขัดข้อง (บร.1)
+    </div>
+    <div class="navbar-nav">
+      <span class="gas-status"><span class="gas-dot" id="gasDot"></span><span id="gasStatusText">GAS</span></span>
+      <div class="nav-link active" id="navBR1" onclick="switchTab('br1')">📋 บร.1</div>
+      <div class="nav-link" id="navHistory" onclick="switchTab('history')">📁 ประวัติ</div>
+      <div class="nav-link" id="navAdmin" onclick="switchTab('admin')" style="display:none">⚙️ Admin</div>
+      <div class="nav-link" id="navUser" onclick="openProfile()" title="แก้ไขข้อมูลส่วนตัว" style="cursor:pointer"></div>
+      <div class="nav-link" onclick="doLogout()" style="color:#fca5a5">ออก</div>
+    </div>
+  </nav>
+  <div class="container">
+    <!-- BR1 FORM -->
+    <div id="tabBR1" class="tab-content active">
+      <div class="card" style="margin-bottom:18px">
+        <div class="section-title">⚡ ค่าบริการงานแก้กระแสไฟฟ้าขัดข้อง (บร.1)</div>
+        <div class="grid-2">
+          <div class="form-group"><label>กฟภ.สาขา <span style="color:#9ca3af;font-size:11px">(จากข้อมูล User)</span></label><input type="text" id="f_branch" readonly></div>
+          <div class="form-group">
+            <label>PEA. <span id="peaMatchLabel"></span></label>
+            <input type="text" id="f_pea" placeholder="หมายเลข PEA" oninput="onPeaInput()">
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="form-group">
+            <label>ชื่อผู้ใช้ไฟฟ้า</label>
+            <input type="text" id="f_customer" placeholder="ชื่อ-นามสกุลผู้ใช้ไฟฟ้า">
+            <div id="peaHint" style="font-size:12px;color:#166534;margin-top:3px;display:none">📌 ข้อมูลอัตโนมัติจากฐานข้อมูล PEA</div>
+          </div>
+          <div class="form-group"><label>ที่อยู่</label><input type="text" id="f_address" placeholder="บ้านเลขที่ ถนน ตำบล อำเภอ จังหวัด"></div>
+        </div>
+        <div class="grid-2">
+          <div class="form-group">
+            <label>พิกัด Lat/Long <span style="font-size:11px;color:#6b7280">(อัตโนมัติ)</span></label>
+            <div style="display:flex;gap:8px;align-items:center"><input type="text" id="f_coords" placeholder="กำลังระบุพิกัด..." readonly style="flex:1"><button class="btn btn-outline btn-sm" onclick="getLocation()">📍</button></div>
+          </div>
+          <div class="form-group">
+            <label>วันเวลาปัจจุบัน</label>
+            <div style="display:flex;gap:6px;align-items:center">
+              <input type="text" id="f_datetime_display" placeholder="วันเวลา" style="flex:1" oninput="syncDatetimeFromDisplay()">
+              <button class="btn btn-outline btn-sm" onclick="setNow()" style="white-space:nowrap">🕐 ตอนนี้</button>
+            </div>
+            <input type="hidden" id="f_datetime">
+          </div>
+        </div>
+      </div>
+      <div class="card" style="margin-bottom:18px">
+        <div class="section-title">ส่วนที่ 1 — ปลด-สับอุปกรณ์ตัดตอนแรงสูง</div>
+        <label class="toggle-check" id="part1Label"><input type="checkbox" id="part1Check" onchange="calcAll()"><div><div style="font-weight:600">ปลด-สับอุปกรณ์ตัดตอนแรงสูง</div><div style="font-size:13px;color:#6b7280">ค่าบริการ 570.00 บาท</div></div></label>
+      </div>
+      <div class="card" style="margin-bottom:18px">
+        <div class="section-title">ส่วนที่ 2 — ค่าบริการตรวจสอบ</div>
+        <div style="display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap">
+          <div style="flex:1;min-width:150px"><label>เวลาที่ปฏิบัติงาน (นาที)</label><input type="number" id="part2Minutes" min="0" placeholder="0" oninput="calcAll()"></div>
+          <div style="flex:1;min-width:150px"><label>อัตราค่าบริการ</label><input type="text" value="9.50 บาท/นาที" readonly></div>
+          <div style="flex:1;min-width:150px"><label>ค่าบริการตรวจสอบรวม</label><input type="text" id="part2Total" readonly style="font-weight:600;color:#4a1660"></div>
+        </div>
+      </div>
+      <div class="card" style="margin-bottom:18px">
+        <div class="section-title">ส่วนที่ 3 — ค่าอุปกรณ์ในการแก้ไข</div>
+        <div style="overflow-x:auto">
+          <table><thead><tr><th style="min-width:130px">รหัสพัสดุ</th><th style="min-width:200px">รายละเอียด</th><th style="min-width:65px">หน่วย</th><th style="min-width:75px">จำนวน</th><th style="min-width:120px">ราคากลาง/หน่วย</th><th style="min-width:155px">ราคารวม (×131%×115%)</th><th></th></tr></thead><tbody id="matBody"></tbody></table>
+        </div>
+        <button class="btn btn-outline btn-sm" style="margin-top:10px" onclick="addMat()">+ เพิ่มรายการพัสดุ</button>
+        <div style="text-align:right;margin-top:10px;font-weight:700;font-size:15px;color:#4a1660">รวมค่าอุปกรณ์: <span id="part3Total">0.00</span> บาท</div>
+      </div>
+      <div class="card" style="margin-bottom:18px">
+        <div class="section-title">ตารางสรุปรายละเอียด</div>
+        <div style="overflow-x:auto">
+          <table class="summary-table"><thead><tr><th>ลำดับที่</th><th>รายการ</th><th style="text-align:right">จำนวนเงิน (บาท)</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>ปลด-สับอุปกรณ์ตัดตอนแรงสูง</td><td id="s1" style="text-align:right">0.00</td></tr>
+            <tr><td>2</td><td>ค่าบริการตรวจสอบ</td><td id="s2" style="text-align:right">0.00</td></tr>
+            <tr><td>3</td><td>ค่าอุปกรณ์ในการแก้ไข</td><td id="s3" style="text-align:right">0.00</td></tr>
+            <tr class="total-row"><td colspan="2" style="text-align:right;font-weight:700">ยอดรวม</td><td id="sTotal" style="text-align:right">0.00</td></tr>
+            <tr class="total-row"><td colspan="2" style="text-align:right">ภาษีมูลค่าเพิ่ม 7%</td><td id="sVat" style="text-align:right">0.00</td></tr>
+            <tr class="grand-total"><td colspan="2" style="text-align:right">รวมทั้งสิ้น</td><td id="sGrand" style="text-align:right">0.00</td></tr>
+          </tbody></table>
+        </div>
+      </div>
+      <div class="card" style="margin-bottom:18px">
+        <div class="section-title">📷 ภาพถ่ายประกอบการปฏิบัติงาน</div>
+        <div style="margin-bottom:18px">
+          <div style="font-weight:600;color:#4a1660;margin-bottom:8px;display:flex;align-items:center;gap:6px"><span style="background:#e9d5f7;color:#4a1660;padding:2px 9px;border-radius:20px;font-size:11px">1 รูป</span> ภาพถ่าย PEA. มิเตอร์</div>
+          <div class="pg1"><div class="photo-slot" id="slot_meter_0" onclick="triggerPhoto('meter',0)"><div class="ph"><div class="phi">📷</div><div class="phl">PEA. มิเตอร์</div><div class="phs">คลิกหรือถ่ายรูป</div></div><input type="file" accept="image/*" capture="environment" onchange="handlePhoto('meter',0,this)" onclick="event.stopPropagation()"><button class="prm" onclick="removePhoto('meter',0,event)">✕</button></div></div>
+        </div>
+        <div style="margin-bottom:18px">
+          <div style="font-weight:600;color:#4a1660;margin-bottom:8px;display:flex;align-items:center;gap:6px"><span style="background:#d1fae5;color:#065f46;padding:2px 9px;border-radius:20px;font-size:11px">2 รูป</span> ภาพถ่ายการปฏิบัติงาน</div>
+          <div class="pg2">
+            <div class="photo-slot" id="slot_work_0" onclick="triggerPhoto('work',0)"><div class="ph"><div class="phi">🔧</div><div class="phl">ปฏิบัติงาน รูปที่ 1</div><div class="phs">คลิกหรือถ่ายรูป</div></div><input type="file" accept="image/*" capture="environment" onchange="handlePhoto('work',0,this)" onclick="event.stopPropagation()"><button class="prm" onclick="removePhoto('work',0,event)">✕</button></div>
+            <div class="photo-slot" id="slot_work_1" onclick="triggerPhoto('work',1)"><div class="ph"><div class="phi">🔧</div><div class="phl">ปฏิบัติงาน รูปที่ 2</div><div class="phs">คลิกหรือถ่ายรูป</div></div><input type="file" accept="image/*" capture="environment" onchange="handlePhoto('work',1,this)" onclick="event.stopPropagation()"><button class="prm" onclick="removePhoto('work',1,event)">✕</button></div>
+          </div>
+        </div>
+        <div>
+          <div style="font-weight:600;color:#4a1660;margin-bottom:8px;display:flex;align-items:center;gap:6px"><span style="background:#fef9c3;color:#854d0e;padding:2px 9px;border-radius:20px;font-size:11px">2 รูป</span> ภาพถ่ายอุปกรณ์ที่ใช้แก้ไข</div>
+          <div class="pg2">
+            <div class="photo-slot" id="slot_equip_0" onclick="triggerPhoto('equip',0)"><div class="ph"><div class="phi">⚙️</div><div class="phl">อุปกรณ์ รูปที่ 1</div><div class="phs">คลิกหรือถ่ายรูป</div></div><input type="file" accept="image/*" capture="environment" onchange="handlePhoto('equip',0,this)" onclick="event.stopPropagation()"><button class="prm" onclick="removePhoto('equip',0,event)">✕</button></div>
+            <div class="photo-slot" id="slot_equip_1" onclick="triggerPhoto('equip',1)"><div class="ph"><div class="phi">⚙️</div><div class="phl">อุปกรณ์ รูปที่ 2</div><div class="phs">คลิกหรือถ่ายรูป</div></div><input type="file" accept="image/*" capture="environment" onchange="handlePhoto('equip',1,this)" onclick="event.stopPropagation()"><button class="prm" onclick="removePhoto('equip',1,event)">✕</button></div>
+          </div>
+        </div>
+      </div>
+      <div class="card" style="margin-bottom:18px">
+        <div class="section-title">ลายมือชื่อ</div>
+        <div class="grid-2">
+          <div><div style="font-weight:600;margin-bottom:10px;color:#4a1660">ผู้ให้บริการ</div>
+            <div class="form-group"><label>ชื่อผู้ให้บริการ</label><input type="text" id="f_provider"></div>
+            <div class="form-group"><label>ตำแหน่ง</label><input type="text" id="f_position"></div>
+          </div>
+          <div><div style="font-weight:600;margin-bottom:10px;color:#4a1660">ผู้รับบริการ</div>
+            <div class="form-group"><label>ชื่อผู้รับบริการ</label><input type="text" id="f_receiver"></div>
+            <div class="form-group"><label>เบอร์โทรศัพท์</label><input type="text" id="f_phone"></div>
+          </div>
+        </div>
+      </div>
+      <div class="no-print" style="display:flex;gap:10px;justify-content:flex-end;margin-bottom:28px">
+        <button class="btn btn-outline" onclick="clearForm()">🗑️ ล้างแบบฟอร์ม</button>
+        <button class="btn btn-outline" onclick="window.print()">🖨️ พิมพ์</button>
+        <button class="btn btn-success" onclick="saveRecord()">💾 บันทึกรายการ</button>
+      </div>
+    </div>
+
+    <!-- HISTORY -->
+    <div id="tabHistory" class="tab-content">
+      <div class="card">
+        <div class="section-title">📁 ประวัติรายการ บร.1</div>
+        <div style="margin-bottom:12px;display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+          <input type="text" id="histSearch" placeholder="🔍 ค้นหา PEA, ชื่อ, สาขา, ผู้บันทึก..." style="max-width:320px" oninput="renderHistory()">
+          <span id="histCount" style="font-size:13px;color:#6b7280;margin-left:auto"></span>
+        </div>
+        <div id="historyTable"></div>
+      </div>
+    </div>
+    <!-- ADMIN -->
+    <div id="tabAdmin" class="tab-content">
+      <div class="tabs" id="adminTabs">
+        <div class="tab active" onclick="switchAdminTab('users')">👥 ผู้ใช้งาน</div>
+        <div class="tab" onclick="switchAdminTab('branches')">🏢 กฟฟ. / สาขา</div>
+        <div class="tab" onclick="switchAdminTab('customers')">🏠 ผู้ใช้ไฟฟ้า</div>
+        <div class="tab" onclick="switchAdminTab('materials')">📦 พัสดุ</div>
+      </div>
+      <div id="atUsers" class="tab-content active"><div class="card"><div class="section-title">👥 รายการผู้ใช้งาน</div><div id="userTable"></div></div></div>
+      <div id="atBranches" class="tab-content">
+        <div class="card" style="margin-bottom:14px">
+          <div class="section-title">➕ เพิ่ม/แก้ไข กฟฟ. / สาขา</div>
+          <div class="grid-3">
+            <div class="form-group"><label>ชื่อ กฟฟ. / สาขา *</label><input type="text" id="br_name" placeholder="เช่น กฟฟ.เมืองขอนแก่น"></div>
+            <div class="form-group"><label>จังหวัด *</label><select id="br_province"><option value="">-- เลือกจังหวัด --</option></select></div>
+            <div class="form-group"><label>เขต *</label>
+              <select id="br_zone"><option value="">-- เลือกเขต --</option>
+                <option>น.1</option><option>น.2</option><option>น.3</option>
+                <option>ฉ.1</option><option>ฉ.2</option><option>ฉ.3</option>
+                <option>ก.1</option><option>ก.2</option><option>ก.3</option>
+                <option>ต.1</option><option>ต.2</option><option>ต.3</option>
+                <option>สำนักงานใหญ่</option>
+              </select>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px"><button class="btn btn-primary btn-sm" onclick="saveBranch()">💾 บันทึก</button><button class="btn btn-outline btn-sm" onclick="clearBranchForm()">ล้าง</button></div>
+          <input type="hidden" id="br_editId">
+        </div>
+        <div class="card" style="margin-bottom:14px">
+          <div class="section-title">📥 นำเข้า กฟฟ. / สาขา จาก CSV</div>
+          <div class="alert alert-info" style="margin-bottom:12px"><b>รูปแบบ CSV:</b> ชื่อ กฟฟ./สาขา, จังหวัด, เขต<br><small>ตัวอย่าง: กฟฟ.เมืองขอนแก่น,ขอนแก่น,น.1</small></div>
+          <div class="drop-zone" onclick="document.getElementById('csvBrFile').click()" ondragover="event.preventDefault();this.classList.add('dragover')" ondragleave="this.classList.remove('dragover')" ondrop="handleBrCsvDrop(event)">
+            <div style="font-size:24px;margin-bottom:6px">📂</div><div style="font-weight:600;margin-bottom:2px">คลิกเพื่อเลือกไฟล์ หรือลากไฟล์มาวาง</div><div style="font-size:12px;color:#6b7280">รองรับไฟล์ .csv</div>
+          </div>
+          <input type="file" id="csvBrFile" accept=".csv" style="display:none" onchange="handleBrCsvFile(this)">
+          <div id="csvBrPreview" style="margin-top:12px"></div>
+        </div>
+        <div class="card"><div class="section-title">🏢 รายการ กฟฟ. / สาขาทั้งหมด</div>
+          <div style="margin-bottom:10px"><input type="text" id="brSearch" placeholder="🔍 ค้นหาชื่อสาขา..." style="max-width:300px" oninput="renderBranches()"></div>
+          <div style="overflow-x:auto"><div id="branchTable"></div></div>
+        </div>
+      </div>
+      <div id="atCustomers" class="tab-content">
+        <div class="card" style="margin-bottom:14px">
+          <div class="section-title">➕ เพิ่ม/แก้ไขผู้ใช้ไฟฟ้า</div>
+          <div class="grid-2">
+            <div class="form-group"><label>PEA. *</label><input type="text" id="c_pea" placeholder="เช่น 010000123456"></div>
+            <div class="form-group"><label>ชื่อผู้ใช้ไฟฟ้า *</label><input type="text" id="c_name" placeholder="ชื่อ-นามสกุล"></div>
+          </div>
+          <div class="grid-2">
+            <div class="form-group"><label>ที่อยู่</label><input type="text" id="c_address" placeholder="บ้านเลขที่ ถนน ตำบล อำเภอ จังหวัด"></div>
+            <div class="form-group"><label>กฟภ.สาขา</label><input type="text" id="c_branch" placeholder="สาขาที่รับผิดชอบ"></div>
+          </div>
+          <div style="display:flex;gap:10px"><button class="btn btn-primary btn-sm" onclick="saveCustomer()">💾 บันทึก</button><button class="btn btn-outline btn-sm" onclick="clearCustomerForm()">ล้าง</button></div>
+          <input type="hidden" id="c_editId">
+        </div>
+        <div class="card" style="margin-bottom:14px">
+          <div class="section-title">📥 นำเข้าผู้ใช้ไฟฟ้าจาก CSV</div>
+          <div class="alert alert-info" style="margin-bottom:12px"><b>รูปแบบ CSV:</b> PEA, ชื่อผู้ใช้ไฟฟ้า, ที่อยู่, กฟภ.สาขา</div>
+          <div class="drop-zone" onclick="document.getElementById('csvCustFile').click()" ondragover="event.preventDefault();this.classList.add('dragover')" ondragleave="this.classList.remove('dragover')" ondrop="handleCustCsvDrop(event)">
+            <div style="font-size:24px;margin-bottom:6px">📂</div><div style="font-weight:600;margin-bottom:2px">คลิกเพื่อเลือกไฟล์ หรือลากไฟล์มาวาง</div><div style="font-size:12px;color:#6b7280">รองรับไฟล์ .csv</div>
+          </div>
+          <input type="file" id="csvCustFile" accept=".csv" style="display:none" onchange="handleCustCsvFile(this)">
+          <div id="csvCustPreview" style="margin-top:12px"></div>
+        </div>
+        <div class="card"><div class="section-title">🏠 รายการผู้ใช้ไฟฟ้าทั้งหมด</div>
+          <div style="margin-bottom:10px"><input type="text" id="custSearch" placeholder="🔍 ค้นหา PEA หรือชื่อ..." style="max-width:300px" oninput="renderCustomers()"></div>
+          <div style="overflow-x:auto"><div id="customerTable"></div></div>
+        </div>
+      </div>
+      <div id="atMaterials" class="tab-content">
+        <div class="card" style="margin-bottom:14px">
+          <div class="section-title">➕ เพิ่ม/แก้ไขพัสดุ</div>
+          <div class="grid-4">
+            <div class="form-group"><label>รหัสพัสดุ *</label><input type="text" id="m_code" placeholder="เช่น PEA-001"></div>
+            <div class="form-group"><label>รายละเอียดพัสดุ *</label><input type="text" id="m_desc" placeholder="ชื่อพัสดุ"></div>
+            <div class="form-group"><label>หน่วยนับ</label><input type="text" id="m_unit" placeholder="เช่น ม., อัน, ชุด"></div>
+            <div class="form-group"><label>ราคากลาง (บาท) *</label><input type="number" id="m_price" placeholder="0.00" min="0" step="0.01"></div>
+          </div>
+          <div class="grid-2" style="margin-bottom:12px">
+            <div class="form-group"><label>ประเภท</label><input type="text" id="m_type" placeholder="เช่น สายไฟ, อุปกรณ์ตัดตอน"></div>
+            <div class="form-group"><label>ใช้ในงานแก้ไฟ</label><select id="m_inuse"><option value="ใช้">ใช้</option><option value="ไม่ใช้">ไม่ใช้</option></select></div>
+          </div>
+          <div style="display:flex;gap:10px"><button class="btn btn-primary btn-sm" onclick="saveMaterial()">💾 บันทึกพัสดุ</button><button class="btn btn-outline btn-sm" onclick="clearMaterialForm()">ล้าง</button></div>
+          <input type="hidden" id="m_editId">
+        </div>
+        <div class="card" style="margin-bottom:14px">
+          <div class="section-title">📥 นำเข้าพัสดุจาก CSV</div>
+          <div class="alert alert-info" style="margin-bottom:12px"><b>รูปแบบ CSV:</b> รหัสพัสดุ, รายละเอียด, หน่วยนับ, ราคากลาง, ประเภท, ใช้ในงานแก้ไฟ</div>
+          <div class="drop-zone" onclick="document.getElementById('csvFile').click()" ondragover="event.preventDefault();this.classList.add('dragover')" ondragleave="this.classList.remove('dragover')" ondrop="handleCsvDrop(event)">
+            <div style="font-size:24px;margin-bottom:6px">📂</div><div style="font-weight:600;margin-bottom:2px">คลิกเพื่อเลือกไฟล์ หรือลากไฟล์มาวาง</div><div style="font-size:12px;color:#6b7280">รองรับไฟล์ .csv</div>
+          </div>
+          <input type="file" id="csvFile" accept=".csv" style="display:none" onchange="handleCsvFile(this)">
+          <div id="csvPreview" style="margin-top:12px"></div>
+        </div>
+        <div class="card"><div class="section-title">📦 รายการพัสดุทั้งหมด</div>
+          <div class="filter-bar">
+            <label style="margin:0;font-weight:600;color:#4a1660">แสดง:</label>
+            <label style="display:flex;align-items:center;gap:5px;margin:0;cursor:pointer"><input type="radio" name="matFilter" value="all" checked onchange="renderMaterials()"> ทั้งหมด</label>
+            <label style="display:flex;align-items:center;gap:5px;margin:0;cursor:pointer"><input type="radio" name="matFilter" value="ใช้" onchange="renderMaterials()"> ใช้ในงานแก้ไฟ</label>
+            <label style="display:flex;align-items:center;gap:5px;margin:0;cursor:pointer"><input type="radio" name="matFilter" value="ไม่ใช้" onchange="renderMaterials()"> ไม่ใช้</label>
+            <span id="matCount" style="margin-left:auto;font-size:13px;color:#6b7280"></span>
+          </div>
+          <div style="overflow-x:auto"><div id="materialTable"></div></div>
+        </div>
+      </div>
+    </div>
+  </div><!-- /container -->
+</div><!-- /mainApp -->
+<div style="text-align:center;padding:16px 0 20px;font-size:13px;color:#9ca3af;background:#f0f4f8;border-top:1px solid #e2e8f0" class="no-print">
+  Dev : ส.อ.ภูวณัตย์ ศรีจันทร์ &nbsp;|&nbsp; พชง.6 ผปร.กฟส.มัญจาคีรี
+</div>
+</div><!-- /app -->
+<script>
+// ╔══════════════════════════════════════════════════════╗
+// ║  🔧 วาง Web App URL จาก Google Apps Script ตรงนี้  ║
+// ╚══════════════════════════════════════════════════════╝
+var GAS_URL = 'https://script.google.com/macros/s/AKfycbxIuF9SoLl6AqoEP5E2L2EWJ7sCPW_c2XsXFWgJki0RgMOhJtq9yu7OHZa4svLH4Ym7/exec';
+
+var PROVINCES=['กรุงเทพมหานคร','กระบี่','กาญจนบุรี','กาฬสินธุ์','กำแพงเพชร','ขอนแก่น','จันทบุรี','ฉะเชิงเทรา','ชลบุรี','ชัยนาท','ชัยภูมิ','ชุมพร','เชียงราย','เชียงใหม่','ตรัง','ตราด','ตาก','นครนายก','นครปฐม','นครพนม','นครราชสีมา','นครศรีธรรมราช','นครสวรรค์','นนทบุรี','นราธิวาส','น่าน','บึงกาฬ','บุรีรัมย์','ปทุมธานี','ประจวบคีรีขันธ์','ปราจีนบุรี','ปัตตานี','พระนครศรีอยุธยา','พะเยา','พังงา','พัทลุง','พิจิตร','พิษณุโลก','เพชรบุรี','เพชรบูรณ์','แพร่','ภูเก็ต','มหาสารคาม','มุกดาหาร','แม่ฮ่องสอน','ยโสธร','ยะลา','ร้อยเอ็ด','ระนอง','ระยอง','ราชบุรี','ลพบุรี','ลำปาง','ลำพูน','เลย','ศรีสะเกษ','สกลนคร','สงขลา','สตูล','สมุทรปราการ','สมุทรสงคราม','สมุทรสาคร','สระแก้ว','สระบุรี','สิงห์บุรี','สุโขทัย','สุพรรณบุรี','สุราษฎร์ธานี','สุรินทร์','หนองคาย','หนองบัวลำภู','อ่างทอง','อำนาจเจริญ','อุดรธานี','อุตรดิตถ์','อุทัยธานี','อุบลราชธานี'];
+
+var currentUser=null,matRows=[],forgotUserId=null;
+var photoData={meter:[null],work:[null,null],equip:[null,null]};
+var cache={materials:[],customers:[],branches:[]};
+
+// ── INIT ──
+(function(){
+  var sel=document.getElementById('br_province');
+  PROVINCES.forEach(function(p){var o=document.createElement('option');o.value=p;o.textContent=p;sel.appendChild(o);});
+  callGAS('ping',{},function(e,r){setGasStatus(!e&&r&&r.ok);});
+})();
+
+// ── GAS API ──
+function callGAS(action,data,cb){
+  fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:action,data:data||{}})})
+  .then(function(r){return r.json();}).then(function(r){cb(null,r);}).catch(function(e){cb(e,null);});
+}
+function callGASL(action,data,txt,cb){
+  showLoading(txt);
+  callGAS(action,data,function(e,r){hideLoading();cb(e,r);});
+}
+function setGasStatus(ok){
+  document.getElementById('gasDot').className='gas-dot'+(ok?'':' err');
+  document.getElementById('gasStatusText').textContent=ok?'เชื่อมต่อแล้ว ✓':'ออฟไลน์ ✗';
+}
+function showLoading(t){document.getElementById('loadingText').textContent=t||'กำลังโหลด...';document.getElementById('loadingOverlay').classList.add('active');}
+function hideLoading(){document.getElementById('loadingOverlay').classList.remove('active');}
+
+// ── AUTH ──
+function doLogin(){
+  var u=document.getElementById('loginUsername').value.trim(),p=document.getElementById('loginPassword').value;
+  if(!u||!p){showAlert('loginAlert','กรุณากรอกข้อมูล','danger');return;}
+  callGASL('login',{username:u,password:p},'กำลังเข้าสู่ระบบ...',function(e,r){
+    if(e||!r){showAlert('loginAlert','เชื่อมต่อ Server ไม่ได้','danger');return;}
+    if(!r.ok){showAlert('loginAlert',r.error||'เกิดข้อผิดพลาด','danger');return;}
+    currentUser=r.user;
+    document.getElementById('navUser').textContent='👤 '+currentUser.name;
+    document.getElementById('navAdmin').style.display=currentUser.role==='admin'?'':'none';
+    document.getElementById('f_branch').value=currentUser.branch||'';
+    if(currentUser.name) document.getElementById('f_provider').value=currentUser.name;
+    if(currentUser.position) document.getElementById('f_position').value=currentUser.position||'';
+    setNow();getLocation();
+    document.getElementById('loginPage').classList.remove('active');
+    document.getElementById('mainApp').classList.add('active');
+    loadAllCache(function(){renderHistory();});
+  });
+}
+function doLogout(){
+  currentUser=null;cache={materials:[],customers:[],branches:[]};
+  document.getElementById('mainApp').classList.remove('active');
+  document.getElementById('loginPage').classList.add('active');
+  document.getElementById('loginUsername').value='';document.getElementById('loginPassword').value='';
+}
+function doRegister(){
+  var name=gv('regName'),uname=gv('regUsername'),pass=document.getElementById('regPassword').value,
+      conf=document.getElementById('regConfirm').value,email=gv('regEmail'),branch=gv('regBranch'),position=gv('regPosition');
+  if(!name||!uname||!pass||!email||!branch){showAlert('regAlert','กรุณากรอกข้อมูลที่จำเป็นและเลือกสาขา','danger');return;}
+  if(pass!==conf){showAlert('regAlert','รหัสผ่านไม่ตรงกัน','danger');return;}
+  callGASL('register',{username:uname,password:pass,name:name,email:email,branch:branch,position:position},'กำลังสมัครใช้งาน...',function(e,r){
+    if(e||!r){showAlert('regAlert','เชื่อมต่อ Server ไม่ได้','danger');return;}
+    if(!r.ok){showAlert('regAlert',r.error||'เกิดข้อผิดพลาด','warning');return;}
+    showAlert('regAlert','สมัครสำเร็จ! รอการอนุมัติจากผู้ดูแลระบบ','success');
+    setTimeout(showLogin,2000);
+  });
+}
+function showLogin(){document.getElementById('loginPage').classList.add('active');document.getElementById('registerPage').classList.remove('active');}
+function showRegister(){
+  if(cache.branches.length===0){callGAS('getBranches',{},function(e,r){if(r&&r.ok)cache.branches=r.data||[];});}
+  document.getElementById('loginPage').classList.remove('active');document.getElementById('registerPage').classList.add('active');
+}
+
+// ── FORGOT ──
+function openForgot(){
+  forgotUserId=null;['fg_uid','fg_email','fg_newpass','fg_confirmpass'].forEach(function(id){document.getElementById(id).value='';});
+  document.getElementById('forgotStep1').style.display='';document.getElementById('forgotStep2').style.display='none';
+  document.getElementById('forgotAlert').innerHTML='';document.getElementById('forgotModal').style.display='flex';
+}
+function closeForgot(){document.getElementById('forgotModal').style.display='none';}
+function verifyForgot(){
+  var uid=gv('fg_uid'),email=gv('fg_email');
+  if(!uid||!email){showAlert('forgotAlert','กรุณากรอกข้อมูล','danger');return;}
+  callGASL('forgotPassword',{username:uid,email:email},'กำลังตรวจสอบ...',function(e,r){
+    if(e||!r||!r.ok){showAlert('forgotAlert',(r&&r.error)||'ไม่พบข้อมูล','danger');return;}
+    forgotUserId=r.userId;
+    document.getElementById('forgotAlert').innerHTML='';
+    document.getElementById('forgotStep1').style.display='none';document.getElementById('forgotStep2').style.display='';
+  });
+}
+function doResetPassword(){
+  var np=document.getElementById('fg_newpass').value,cp=document.getElementById('fg_confirmpass').value;
+  if(!np){showAlert('forgotAlert','กรุณากรอกรหัสผ่านใหม่','danger');return;}
+  if(np!==cp){showAlert('forgotAlert','รหัสผ่านไม่ตรงกัน','danger');return;}
+  if(np.length<4){showAlert('forgotAlert','รหัสผ่านต้องมีอย่างน้อย 4 ตัวอักษร','danger');return;}
+  callGASL('resetPassword',{userId:forgotUserId,newPassword:np},'กำลังเปลี่ยนรหัสผ่าน...',function(e,r){
+    if(e||!r||!r.ok){showAlert('forgotAlert','เกิดข้อผิดพลาด','danger');return;}
+    showAlert('forgotAlert','เปลี่ยนรหัสผ่านสำเร็จ! กรุณาเข้าสู่ระบบใหม่','success');
+    setTimeout(function(){closeForgot();showLogin();},1800);
+  });
+}
+
+// ── PROFILE ──
+function openProfile(){
+  if(!currentUser)return;
+  document.getElementById('p_name').value=currentUser.name||'';document.getElementById('p_email').value=currentUser.email||'';
+  document.getElementById('p_branch').value=currentUser.branch||'';document.getElementById('p_position').value=currentUser.position||'';
+  document.getElementById('p_newpass').value='';document.getElementById('p_confirmpass').value='';
+  document.getElementById('profileAlert').innerHTML='';document.getElementById('profileModal').style.display='flex';
+}
+function closeProfile(){document.getElementById('profileModal').style.display='none';}
+function saveProfile(){
+  var name=gv('p_name'),email=gv('p_email'),position=gv('p_position'),
+      np=document.getElementById('p_newpass').value,cp=document.getElementById('p_confirmpass').value;
+  if(!name){showAlert('profileAlert','กรุณากรอกชื่อ','danger');return;}
+  if(np&&np!==cp){showAlert('profileAlert','รหัสผ่านใหม่ไม่ตรงกัน','danger');return;}
+  var upd={id:currentUser.id,name:name,email:email,position:position,branch:currentUser.branch,role:currentUser.role,status:currentUser.status};
+  if(np)upd.password=np;
+  callGASL('updateUser',upd,'กำลังบันทึก...',function(e,r){
+    if(e||!r||!r.ok){showAlert('profileAlert','เกิดข้อผิดพลาด','danger');return;}
+    Object.assign(currentUser,{name:name,email:email,position:position});
+    document.getElementById('navUser').textContent='👤 '+name;
+    document.getElementById('f_provider').value=name;document.getElementById('f_position').value=position;
+    showAlert('profileAlert','บันทึกสำเร็จ ✅','success');setTimeout(closeProfile,1200);
+  });
+}
+
+// ── CACHE ──
+function loadAllCache(cb){
+  showLoading('กำลังโหลดข้อมูล...');
+  var done=0;
+  function check(){done++;if(done===3){hideLoading();if(cb)cb();}}
+  callGAS('getMaterials',{},function(e,r){if(r&&r.ok)cache.materials=r.data||[];renderMatTable();check();});
+  callGAS('getCustomers',{},function(e,r){if(r&&r.ok)cache.customers=r.data||[];check();});
+  callGAS('getBranches', {},function(e,r){if(r&&r.ok)cache.branches=r.data||[];check();});
+}
+
+// ── BRANCH DROPDOWN ──
+function filterRegBranch(){buildBranchDD('regBranch','regBranchDropdown');}
+function filterEuBranch() {buildBranchDD('eu_branch','euBranchDropdown');}
+function buildBranchDD(inputId,ddId){
+  var input=document.getElementById(inputId);
+  var val=input.value.toLowerCase();
+  var dd=document.getElementById(ddId);
+  var filtered=val?cache.branches.filter(function(b){return (b.name||'').toLowerCase().includes(val)||(b.province||'').toLowerCase().includes(val);}):cache.branches;
+  if(!filtered.length||(!val&&inputId==='regBranch')){dd.style.display='none';return;}
+  dd.innerHTML='';
+  filtered.slice(0,12).forEach(function(b){
+    var item=document.createElement('div');
+    item.style.cssText='padding:8px 12px;cursor:pointer;border-bottom:1px solid #f1f5f9;font-size:13px';
+    item.innerHTML='<b>'+esc(b.name)+'</b><span style="color:#6b7280;font-size:11px;margin-left:6px">'+esc(b.province)+' / เขต '+esc(b.zone)+'</span>';
+    item.onmousedown=function(e){e.preventDefault();input.value=b.name;dd.style.display='none';};
+    item.onmouseover=function(){this.style.background='#f5eefa';};item.onmouseout=function(){this.style.background='';};
+    dd.appendChild(item);
+  });
+  dd.style.display='block';
+}
+document.addEventListener('click',function(e){
+  [['regBranch','regBranchDropdown'],['eu_branch','euBranchDropdown']].forEach(function(pair){
+    var inp=document.getElementById(pair[0]),dd=document.getElementById(pair[1]);
+    if(dd&&inp&&!inp.contains(e.target)&&!dd.contains(e.target))dd.style.display='none';
+  });
+});
+// ── BRANCHES ADMIN ──
+function saveBranch(){
+  var name=gv('br_name'),province=gv('br_province'),zone=gv('br_zone'),editId=gv('br_editId');
+  if(!name||!province||!zone){alert('กรุณากรอกชื่อ กฟฟ. จังหวัด และเขต');return;}
+  var data={name:name,province:province,zone:zone};if(editId)data.id=editId;
+  callGASL('saveBranch',data,'กำลังบันทึก...',function(e,r){
+    if(e||!r||!r.ok){alert('เกิดข้อผิดพลาด: '+(r&&r.error||''));return;}
+    callGAS('getBranches',{},function(e2,r2){if(r2&&r2.ok)cache.branches=r2.data||[];clearBranchForm();renderBranches();});
+  });
+}
+function deleteBranch(id){
+  if(!confirm('ต้องการลบ กฟฟ. / สาขานี้?'))return;
+  callGASL('deleteBranch',{id:id},'กำลังลบ...',function(e,r){
+    if(e||!r||!r.ok){alert('เกิดข้อผิดพลาด');return;}
+    cache.branches=cache.branches.filter(function(b){return b.id!=id;});renderBranches();
+  });
+}
+function editBranch(id){
+  var b=cache.branches.find(function(x){return x.id==id;});if(!b)return;
+  document.getElementById('br_name').value=b.name||'';document.getElementById('br_province').value=b.province||'';
+  document.getElementById('br_zone').value=b.zone||'';document.getElementById('br_editId').value=b.id;
+  document.getElementById('br_name').scrollIntoView({behavior:'smooth',block:'center'});
+}
+function clearBranchForm(){['br_name','br_editId'].forEach(function(id){document.getElementById(id).value='';});document.getElementById('br_province').value='';document.getElementById('br_zone').value='';}
+function handleBrCsvDrop(e){e.preventDefault();e.currentTarget.classList.remove('dragover');var f=e.dataTransfer.files[0];if(f)processBrCsv(f);}
+function handleBrCsvFile(inp){if(inp.files[0])processBrCsv(inp.files[0]);}
+function processBrCsv(file){
+  if(!file.name.toLowerCase().endsWith('.csv')){alert('กรุณาเลือกไฟล์ .csv');return;}
+  var reader=new FileReader();
+  reader.onload=function(e){
+    var text=e.target.result;if(text.charCodeAt(0)===0xFEFF)text=text.slice(1);
+    var lines=text.split(/\r?\n/).filter(function(l){return l.trim();});
+    var si=0;if((lines[0]||'').toLowerCase().includes('กฟฟ')||(lines[0]||'').toLowerCase().includes('ชื่อ'))si=1;
+    var rows=[];
+    for(var i=si;i<lines.length;i++){
+      var cols=lines[i].split(',').map(function(c){return c.trim().replace(/^"|"$/g,'');});
+      if(!cols[0])continue;rows.push({name:cols[0],province:cols[1]||'',zone:cols[2]||''});
+    }
+    if(!rows.length){document.getElementById('csvBrPreview').innerHTML='<div class="alert alert-danger">ไม่พบข้อมูลที่ถูกต้อง</div>';return;}
+    var ph='<div class="alert alert-info">พบ <b>'+rows.length+'</b> รายการ</div>';
+    ph+='<div style="overflow-x:auto;max-height:180px;overflow-y:auto;margin-bottom:10px"><table><thead><tr><th>ชื่อ กฟฟ.</th><th>จังหวัด</th><th>เขต</th></tr></thead><tbody>';
+    rows.slice(0,15).forEach(function(r){ph+='<tr><td>'+esc(r.name)+'</td><td>'+esc(r.province)+'</td><td>'+esc(r.zone)+'</td></tr>';});
+    if(rows.length>15)ph+='<tr><td colspan="3" style="text-align:center;color:#9ca3af">...และอีก '+(rows.length-15)+' รายการ</td></tr>';
+    ph+='</tbody></table></div><div style="display:flex;gap:10px"><button class="btn btn-success btn-sm" onclick="importBrRows('+JSON.stringify(rows).replace(/</g,'&lt;')+')">📥 นำเข้าทั้งหมด</button><button class="btn btn-outline btn-sm" onclick="document.getElementById(\'csvBrPreview\').innerHTML=\'\'">ยกเลิก</button></div>';
+    document.getElementById('csvBrPreview').innerHTML=ph;
+  };
+  reader.readAsText(file,'UTF-8');
+}
+function importBrRows(rows){
+  if(typeof rows==='string')rows=JSON.parse(rows);
+  callGASL('batchSaveBranches',{rows:rows},'กำลังนำเข้า...',function(e,r){
+    if(e||!r||!r.ok){alert('เกิดข้อผิดพลาด');return;}
+    callGAS('getBranches',{},function(e2,r2){if(r2&&r2.ok)cache.branches=r2.data||[];renderBranches();});
+    document.getElementById('csvBrPreview').innerHTML='<div class="alert alert-success">นำเข้าสำเร็จ! เพิ่มใหม่ '+(r.added||0)+' | อัปเดต '+(r.updated||0)+'</div>';
+    document.getElementById('csvBrFile').value='';
+  });
+}
+function renderBranches(){
+  var kw=(document.getElementById('brSearch')?document.getElementById('brSearch').value:'').toLowerCase();
+  var all=cache.branches.slice().sort(function(a,b){return (a.name||'').localeCompare(b.name||'','th');});
+  var shown=kw?all.filter(function(b){return (b.name||'').toLowerCase().includes(kw)||(b.province||'').includes(kw);}):all;
+  var html='<table><thead><tr><th>ลำดับ</th><th>ชื่อ กฟฟ. / สาขา</th><th>จังหวัด</th><th>เขต</th><th>จัดการ</th></tr></thead><tbody>';
+  if(!shown.length)html+='<tr><td colspan="5" style="text-align:center;color:#9ca3af;padding:20px">ไม่มีรายการ</td></tr>';
+  shown.forEach(function(b,i){
+    html+='<tr><td style="color:#9ca3af">'+(i+1)+'</td><td><b>'+esc(b.name||'')+'</b></td><td>'+esc(b.province||'')+'</td><td><span class="badge badge-blue">'+esc(b.zone||'')+'</span></td>';
+    html+='<td style="white-space:nowrap"><button class="btn btn-outline btn-sm" onclick="editBranch(\''+b.id+'\')">✏️</button> <button class="btn btn-danger btn-sm" onclick="deleteBranch(\''+b.id+'\')">ลบ</button></td></tr>';
+  });
+  html+='</tbody></table><div style="font-size:13px;color:#6b7280;margin-top:8px">แสดง '+shown.length+' / '+all.length+' รายการ</div>';
+  document.getElementById('branchTable').innerHTML=html;
+}
+
+// ── CUSTOMERS ──
+function onPeaInput(){
+  var peaVal=document.getElementById('f_pea').value.trim();
+  var found=cache.customers.find(function(c){return c.pea===peaVal;});
+  var label=document.getElementById('peaMatchLabel'),custInp=document.getElementById('f_customer'),addrInp=document.getElementById('f_address'),hint=document.getElementById('peaHint');
+  if(found){
+    label.innerHTML='<span class="pea-match found">✓ พบข้อมูล</span>';
+    custInp.value=found.name||'';custInp.readOnly=true;addrInp.value=found.address||'';addrInp.readOnly=true;hint.style.display='block';
+  } else {
+    label.innerHTML=peaVal?'<span class="pea-match notfound">ไม่พบ — กรอกเองได้</span>':'';
+    custInp.readOnly=false;addrInp.readOnly=false;hint.style.display='none';
+  }
+}
+function saveCustomer(){
+  var pea=gv('c_pea'),name=gv('c_name'),address=gv('c_address'),branch=gv('c_branch'),editId=gv('c_editId');
+  if(!pea||!name){alert('กรุณากรอก PEA และชื่อผู้ใช้ไฟฟ้า');return;}
+  var data={pea:pea,name:name,address:address,branch:branch};if(editId)data.id=editId;
+  callGASL('saveCustomer',data,'กำลังบันทึก...',function(e,r){
+    if(e||!r||!r.ok){alert('เกิดข้อผิดพลาด: '+(r&&r.error||''));return;}
+    callGAS('getCustomers',{},function(e2,r2){if(r2&&r2.ok)cache.customers=r2.data||[];clearCustomerForm();renderCustomers();});
+  });
+}
+function deleteCustomer(id){
+  if(!confirm('ต้องการลบ?'))return;
+  callGASL('deleteCustomer',{id:id},'กำลังลบ...',function(e,r){
+    if(e||!r||!r.ok){alert('เกิดข้อผิดพลาด');return;}
+    cache.customers=cache.customers.filter(function(c){return c.id!=id;});renderCustomers();
+  });
+}
+function editCustomer(id){
+  var c=cache.customers.find(function(x){return x.id==id;});if(!c)return;
+  document.getElementById('c_pea').value=c.pea||'';document.getElementById('c_name').value=c.name||'';
+  document.getElementById('c_address').value=c.address||'';document.getElementById('c_branch').value=c.branch||'';
+  document.getElementById('c_editId').value=c.id;document.getElementById('c_pea').scrollIntoView({behavior:'smooth',block:'center'});
+}
+function clearCustomerForm(){['c_pea','c_name','c_address','c_branch','c_editId'].forEach(function(id){document.getElementById(id).value='';});}
+function renderCustomers(){
+  var kw=(document.getElementById('custSearch')?document.getElementById('custSearch').value:'').toLowerCase();
+  var shown=kw?cache.customers.filter(function(c){return (c.pea||'').includes(kw)||(c.name||'').toLowerCase().includes(kw);}):cache.customers;
+  var html='<table><thead><tr><th>ลำดับ</th><th>PEA</th><th>ชื่อผู้ใช้ไฟฟ้า</th><th>ที่อยู่</th><th>กฟภ.สาขา</th><th>จัดการ</th></tr></thead><tbody>';
+  if(!shown.length)html+='<tr><td colspan="6" style="text-align:center;color:#9ca3af;padding:20px">ไม่มีรายการ</td></tr>';
+  shown.forEach(function(c,i){
+    html+='<tr><td style="color:#9ca3af">'+(i+1)+'</td><td><b>'+esc(c.pea||'')+'</b></td><td>'+esc(c.name||'')+'</td><td>'+esc(c.address||'-')+'</td><td>'+esc(c.branch||'-')+'</td>';
+    html+='<td style="white-space:nowrap"><button class="btn btn-outline btn-sm" onclick="editCustomer(\''+c.id+'\')">✏️</button> <button class="btn btn-danger btn-sm" onclick="deleteCustomer(\''+c.id+'\')">ลบ</button></td></tr>';
+  });
+  html+='</tbody></table><div style="font-size:13px;color:#6b7280;margin-top:8px">แสดง '+shown.length+' / '+cache.customers.length+' รายการ</div>';
+  document.getElementById('customerTable').innerHTML=html;
+}
+function handleCustCsvDrop(e){e.preventDefault();e.currentTarget.classList.remove('dragover');var f=e.dataTransfer.files[0];if(f)processCustCsv(f);}
+function handleCustCsvFile(inp){if(inp.files[0])processCustCsv(inp.files[0]);}
+function processCustCsv(file){
+  if(!file.name.toLowerCase().endsWith('.csv')){alert('กรุณาเลือกไฟล์ .csv');return;}
+  var reader=new FileReader();
+  reader.onload=function(e){
+    var text=e.target.result;if(text.charCodeAt(0)===0xFEFF)text=text.slice(1);
+    var lines=text.split(/\r?\n/).filter(function(l){return l.trim();});
+    var si=0;if((lines[0]||'').toLowerCase().includes('pea')||(lines[0]||'').toLowerCase().includes('เลข'))si=1;
+    var rows=[];
+    for(var i=si;i<lines.length;i++){
+      var cols=lines[i].split(',').map(function(c){return c.trim().replace(/^"|"$/g,'');});
+      if(cols.length<2||!cols[0]||!cols[1])continue;rows.push({pea:cols[0],name:cols[1],address:cols[2]||'',branch:cols[3]||''});
+    }
+    if(!rows.length){document.getElementById('csvCustPreview').innerHTML='<div class="alert alert-danger">ไม่พบข้อมูลที่ถูกต้อง</div>';return;}
+    var ph='<div class="alert alert-info">พบ <b>'+rows.length+'</b> รายการ</div>';
+    ph+='<div style="overflow-x:auto;max-height:180px;overflow-y:auto;margin-bottom:10px"><table><thead><tr><th>PEA</th><th>ชื่อ</th><th>ที่อยู่</th><th>สาขา</th></tr></thead><tbody>';
+    rows.slice(0,15).forEach(function(r){ph+='<tr><td>'+esc(r.pea)+'</td><td>'+esc(r.name)+'</td><td>'+esc(r.address)+'</td><td>'+esc(r.branch)+'</td></tr>';});
+    if(rows.length>15)ph+='<tr><td colspan="4" style="text-align:center;color:#9ca3af">...และอีก '+(rows.length-15)+' รายการ</td></tr>';
+    ph+='</tbody></table></div><div style="display:flex;gap:10px"><button class="btn btn-success btn-sm" onclick="importCustRows('+JSON.stringify(rows).replace(/</g,'&lt;')+')">📥 นำเข้าทั้งหมด</button><button class="btn btn-outline btn-sm" onclick="document.getElementById(\'csvCustPreview\').innerHTML=\'\'">ยกเลิก</button></div>';
+    document.getElementById('csvCustPreview').innerHTML=ph;
+  };
+  reader.readAsText(file,'UTF-8');
+}
+function importCustRows(rows){
+  if(typeof rows==='string')rows=JSON.parse(rows);
+  callGASL('batchSaveCustomers',{rows:rows},'กำลังนำเข้า...',function(e,r){
+    if(e||!r||!r.ok){alert('เกิดข้อผิดพลาด');return;}
+    callGAS('getCustomers',{},function(e2,r2){if(r2&&r2.ok)cache.customers=r2.data||[];renderCustomers();});
+    document.getElementById('csvCustPreview').innerHTML='<div class="alert alert-success">นำเข้าสำเร็จ! เพิ่มใหม่ '+(r.added||0)+' | อัปเดต '+(r.updated||0)+' | ข้าม '+(r.skipped||0)+'</div>';
+    document.getElementById('csvCustFile').value='';
+  });
+}
+// ── MATERIALS ──
+function getFormMaterials(){return cache.materials.filter(function(m){return m.inuse==='ใช้';});}
+function saveMaterial(){
+  var code=gv('m_code'),desc=gv('m_desc'),unit=gv('m_unit'),price=parseFloat(gv('m_price'))||0,
+      type=gv('m_type'),inuse=document.getElementById('m_inuse').value,editId=gv('m_editId');
+  if(!code||!desc||!price){alert('กรุณากรอกรหัสพัสดุ รายละเอียด และราคากลาง');return;}
+  var data={code:code,desc:desc,unit:unit,price:price,type:type,inuse:inuse};if(editId)data.id=editId;
+  callGASL('saveMaterial',data,'กำลังบันทึก...',function(e,r){
+    if(e||!r||!r.ok){alert('เกิดข้อผิดพลาด: '+(r&&r.error||''));return;}
+    callGAS('getMaterials',{},function(e2,r2){if(r2&&r2.ok)cache.materials=r2.data||[];clearMaterialForm();renderMaterials();renderMatTable();});
+  });
+}
+function deleteMaterial(id){
+  if(!confirm('ต้องการลบ?'))return;
+  callGASL('deleteMaterial',{id:id},'กำลังลบ...',function(e,r){
+    if(e||!r||!r.ok){alert('เกิดข้อผิดพลาด');return;}
+    cache.materials=cache.materials.filter(function(m){return m.id!=id;});renderMaterials();renderMatTable();
+  });
+}
+function editMaterial(id){
+  var m=cache.materials.find(function(x){return x.id==id;});if(!m)return;
+  document.getElementById('m_code').value=m.code;document.getElementById('m_desc').value=m.desc;
+  document.getElementById('m_unit').value=m.unit||'';document.getElementById('m_price').value=m.price;
+  document.getElementById('m_type').value=m.type||'';document.getElementById('m_inuse').value=m.inuse||'ใช้';
+  document.getElementById('m_editId').value=m.id;document.getElementById('m_code').scrollIntoView({behavior:'smooth',block:'center'});
+}
+function clearMaterialForm(){
+  ['m_code','m_desc','m_unit','m_price','m_type','m_editId'].forEach(function(id){document.getElementById(id).value='';});
+  document.getElementById('m_inuse').value='ใช้';
+}
+function renderMaterials(){
+  var filter=document.querySelector('input[name="matFilter"]:checked');filter=filter?filter.value:'all';
+  var shown=filter==='all'?cache.materials:cache.materials.filter(function(m){return m.inuse===filter;});
+  var html='<table><thead><tr><th>ลำดับ</th><th>รหัสพัสดุ</th><th>รายละเอียด</th><th>หน่วย</th><th style="text-align:right">ราคากลาง</th><th>ประเภท</th><th>ใช้งาน</th><th style="text-align:right">ค่าบริการ (×131%×115%)</th><th>จัดการ</th></tr></thead><tbody>';
+  if(!shown.length)html+='<tr><td colspan="9" style="text-align:center;color:#9ca3af;padding:20px">ไม่มีรายการ</td></tr>';
+  shown.forEach(function(m,i){
+    html+='<tr><td style="color:#9ca3af">'+(i+1)+'</td><td><b>'+esc(m.code)+'</b></td><td>'+esc(m.desc)+'</td><td>'+esc(m.unit||'-')+'</td><td style="text-align:right">'+fmt(m.price)+'</td><td><span class="badge badge-blue" style="font-size:11px">'+esc(m.type||'-')+'</span></td><td><span class="badge '+(m.inuse==='ใช้'?'badge-green':'badge-gray')+'">'+esc(m.inuse||'ใช้')+'</span></td><td style="text-align:right;font-weight:600;color:#4a1660">'+fmt(m.price*1.31*1.15)+'</td><td style="white-space:nowrap"><button class="btn btn-outline btn-sm" onclick="editMaterial(\''+m.id+'\')">✏️</button> <button class="btn btn-danger btn-sm" onclick="deleteMaterial(\''+m.id+'\')">ลบ</button></td></tr>';
+  });
+  html+='</tbody></table>';
+  document.getElementById('materialTable').innerHTML=html;
+  var cnt=document.getElementById('matCount');if(cnt)cnt.textContent='แสดง '+shown.length+' / '+cache.materials.length+' รายการ';
+}
+function handleCsvDrop(e){e.preventDefault();e.currentTarget.classList.remove('dragover');var f=e.dataTransfer.files[0];if(f)processCsvFile(f);}
+function handleCsvFile(inp){if(inp.files[0])processCsvFile(inp.files[0]);}
+function processCsvFile(file){
+  if(!file.name.toLowerCase().endsWith('.csv')){alert('กรุณาเลือกไฟล์ .csv');return;}
+  var reader=new FileReader();
+  reader.onload=function(e){
+    var text=e.target.result;if(text.charCodeAt(0)===0xFEFF)text=text.slice(1);
+    var lines=text.split(/\r?\n/).filter(function(l){return l.trim();});
+    var si=0;var fl=lines[0]||'';
+    if(fl.toLowerCase().includes('รหัส')||fl.toLowerCase().includes('code')||isNaN(fl.split(',')[3]))si=1;
+    var rows=[],errs=[];
+    for(var i=si;i<lines.length;i++){
+      var cols=lines[i].split(',').map(function(c){return c.trim().replace(/^"|"$/g,'');});
+      if(cols.length<4||!cols[0]||!cols[1])continue;
+      var price=parseFloat(cols[3]);if(isNaN(price)||price<=0){errs.push(i+1);continue;}
+      var inuse=(cols[5]||'ใช้').trim();if(inuse!=='ใช้'&&inuse!=='ไม่ใช้')inuse='ใช้';
+      rows.push({code:cols[0],desc:cols[1],unit:cols[2]||'',price:price,type:cols[4]||'',inuse:inuse});
+    }
+    if(!rows.length){document.getElementById('csvPreview').innerHTML='<div class="alert alert-danger">ไม่พบข้อมูลที่ถูกต้อง</div>';return;}
+    var ph='<div class="alert alert-info">พบ <b>'+rows.length+'</b> รายการ'+(errs.length?' (ข้าม '+errs.length+' บรรทัด)':'')+'</div>';
+    ph+='<div style="overflow-x:auto;max-height:180px;overflow-y:auto;margin-bottom:10px"><table><thead><tr><th>รหัส</th><th>รายละเอียด</th><th>ราคากลาง</th><th>ใช้งาน</th></tr></thead><tbody>';
+    rows.slice(0,15).forEach(function(r){ph+='<tr><td>'+esc(r.code)+'</td><td>'+esc(r.desc)+'</td><td>'+fmt(r.price)+'</td><td>'+esc(r.inuse)+'</td></tr>';});
+    if(rows.length>15)ph+='<tr><td colspan="4" style="text-align:center;color:#9ca3af">...และอีก '+(rows.length-15)+' รายการ</td></tr>';
+    ph+='</tbody></table></div><div style="display:flex;gap:10px"><button class="btn btn-success btn-sm" onclick="importCsvRows('+JSON.stringify(rows).replace(/</g,'&lt;')+')">📥 นำเข้าทั้งหมด</button><button class="btn btn-outline btn-sm" onclick="document.getElementById(\'csvPreview\').innerHTML=\'\'">ยกเลิก</button></div>';
+    document.getElementById('csvPreview').innerHTML=ph;
+  };
+  reader.readAsText(file,'UTF-8');
+}
+function importCsvRows(rows){
+  if(typeof rows==='string')rows=JSON.parse(rows);
+  callGASL('batchSaveMaterials',{rows:rows},'กำลังนำเข้า...',function(e,r){
+    if(e||!r||!r.ok){alert('เกิดข้อผิดพลาด');return;}
+    callGAS('getMaterials',{},function(e2,r2){if(r2&&r2.ok)cache.materials=r2.data||[];renderMaterials();renderMatTable();});
+    document.getElementById('csvPreview').innerHTML='<div class="alert alert-success">นำเข้าสำเร็จ! เพิ่มใหม่ '+(r.added||0)+' | อัปเดต '+(r.updated||0)+'</div>';
+    document.getElementById('csvFile').value='';
+  });
+}
+
+// ── RECORDS ──
+function saveRecord(){
+  var mins=parseFloat(document.getElementById('part2Minutes').value)||0;
+  var p1=document.getElementById('part1Check').checked?570:0,p2=mins*9.5,p3=0;
+  matRows.forEach(function(r){p3+=r.price*r.qty*1.31*1.15;});
+  var total=p1+p2+p3;
+  var rec={savedBy:currentUser.name,savedById:currentUser.id,branch:gv('f_branch'),pea:gv('f_pea'),
+    customer:gv('f_customer'),address:gv('f_address'),coords:gv('f_coords'),datetime:getDatetimeValue(),
+    part1:p1,part2Minutes:mins,part2:p2,materials:JSON.parse(JSON.stringify(matRows)),part3:p3,
+    total:total,vat:total*0.07,grand:total*1.07,provider:gv('f_provider'),position:gv('f_position'),
+    receiver:gv('f_receiver'),phone:gv('f_phone'),photos:JSON.parse(JSON.stringify(photoData))};
+  callGASL('saveRecord',rec,'กำลังบันทึกรายการ...',function(e,r){
+    if(e||!r||!r.ok){alert('เกิดข้อผิดพลาด: '+(r&&r.error||'เชื่อมต่อไม่ได้'));return;}
+    alert('บันทึกรายการสำเร็จ! ✅');resetForm();renderHistory();
+  });
+}
+
+function resetForm(){
+  ['f_pea','f_customer','f_address','f_receiver','f_phone'].forEach(function(id){document.getElementById(id).value='';});
+  document.getElementById('f_customer').readOnly=false;document.getElementById('f_address').readOnly=false;
+  document.getElementById('peaMatchLabel').innerHTML='';document.getElementById('peaHint').style.display='none';
+  if(currentUser){document.getElementById('f_provider').value=currentUser.name||'';document.getElementById('f_position').value=currentUser.position||'';document.getElementById('f_branch').value=currentUser.branch||'';}
+  document.getElementById('part1Check').checked=false;document.getElementById('part1Label').classList.remove('checked');
+  document.getElementById('part2Minutes').value='';document.getElementById('part2Total').value='';
+  matRows=[];renderMatTable();resetPhotoSlots();setNow();getLocation();calcAll();
+}
+function clearForm(){if(!confirm('ต้องการล้างแบบฟอร์มทั้งหมด?'))return;resetForm();}
+
+var _historyRecsCache = [];
+
+function renderHistory(){
+  var kw=(document.getElementById('histSearch')?document.getElementById('histSearch').value:'').toLowerCase();
+  callGASL('getRecords',{role:currentUser.role,userId:currentUser.id},'กำลังโหลดประวัติ...',function(e,r){
+    if(e||!r||!r.ok){document.getElementById('historyTable').innerHTML='<p style="color:#dc2626;padding:20px">โหลดข้อมูลไม่สำเร็จ</p>';return;}
+    _historyRecsCache=r.data||[];
+    var recs=_historyRecsCache.slice();
+    if(kw)recs=recs.filter(function(r){return (r.pea||'').includes(kw)||(r.customer||'').toLowerCase().includes(kw)||(r.branch||'').toLowerCase().includes(kw)||(r.savedBy||'').toLowerCase().includes(kw);});
+    var cnt=document.getElementById('histCount');if(cnt)cnt.textContent='แสดง '+recs.length+' รายการ';
+    var isAdmin=currentUser.role==='admin';
+    var html='';
+    if(!recs.length){html='<p style="color:#9ca3af;text-align:center;padding:24px">ยังไม่มีรายการ</p>';}
+    else{
+      html='<div style="overflow-x:auto"><table><thead><tr><th>วันที่บันทึก</th><th>ผู้ใช้ไฟฟ้า</th><th>PEA</th><th>สาขา</th><th style="text-align:right">รวมทั้งสิ้น</th><th>บันทึกโดย</th><th></th></tr></thead><tbody>';
+      recs.forEach(function(r){
+        var dt=r.savedAt?new Date(r.savedAt).toLocaleString('th-TH'):'';
+        var canEdit=isAdmin||(String(r.savedById)===String(currentUser.id));
+        var rid=String(r.id).replace(/'/g,"\\'");
+        html+='<tr><td>'+dt+'</td><td>'+esc(r.customer||'-')+'</td><td>'+esc(r.pea||'-')+'</td><td>'+esc(r.branch||'-')+'</td><td style="text-align:right;font-weight:600">'+fmt(r.grand)+' ฿</td><td>'+esc(r.savedBy||'-')+'</td>';
+        html+='<td style="white-space:nowrap;display:flex;gap:4px"><button class="btn btn-outline btn-sm" onclick="viewRecord(\''+rid+'\')">ดู</button>';
+        if(canEdit)html+='<button class="btn btn-warning btn-sm" onclick="openEditRecordById(\''+rid+'\')">แก้ไข</button><button class="btn btn-danger btn-sm" onclick="deleteRecord(\''+rid+'\')">ลบ</button>';
+        html+='</td></tr>';
+      });
+      html+='</tbody></table></div>';
+    }
+    document.getElementById('historyTable').innerHTML=html;
+  });
+}
+
+function deleteRecord(id){
+  if(!confirm('ต้องการลบรายการนี้?'))return;
+  callGASL('deleteRecord',{id:id},'กำลังลบ...',function(e,r){
+    if(e||!r||!r.ok){alert('เกิดข้อผิดพลาด');return;}renderHistory();
+  });
+}
+function openEditRecordById(id){
+  var r=_historyRecsCache.find(function(x){return String(x.id)===String(id);});
+  if(!r){
+    // ลองหาจาก history recs ของ user history modal ด้วย
+    r=_currentHistoryRecs.find(function(x){return String(x.id)===String(id);});
+  }
+  if(!r){alert('ไม่พบรายการ');return;}
+  openEditRecord(id,r);
+}
+function openEditRecord(id,r){
+  document.getElementById('er_branch').value=r.branch||'';document.getElementById('er_pea').value=r.pea||'';
+  document.getElementById('er_customer').value=r.customer||'';document.getElementById('er_address').value=r.address||'';
+  document.getElementById('er_provider').value=r.provider||'';document.getElementById('er_position').value=r.position||'';
+  document.getElementById('er_receiver').value=r.receiver||'';document.getElementById('er_phone').value=r.phone||'';
+  document.getElementById('er_datetime').value=r.datetime||'';document.getElementById('er_id').value=id;
+  document.getElementById('editRecordAlert').innerHTML='';document.getElementById('editRecordModal').style.display='flex';
+}
+function closeEditRecord(){document.getElementById('editRecordModal').style.display='none';}
+function saveEditRecord(){
+  var id=document.getElementById('er_id').value;
+  var data={id:id,branch:gv('er_branch'),pea:gv('er_pea'),customer:gv('er_customer'),address:gv('er_address'),
+    provider:gv('er_provider'),position:gv('er_position'),receiver:gv('er_receiver'),phone:gv('er_phone'),
+    datetime:gv('er_datetime'),editedBy:currentUser.name};
+  callGASL('updateRecord',data,'กำลังบันทึก...',function(e,r){
+    if(e||!r||!r.ok){showAlert('editRecordAlert','เกิดข้อผิดพลาด','danger');return;}
+    showAlert('editRecordAlert','บันทึกสำเร็จ ✅','success');setTimeout(function(){closeEditRecord();renderHistory();},1000);
+  });
+}
+
+function viewRecord(id){
+  var rec=_historyRecsCache.find(function(x){return String(x.id)===String(id);});
+  if(!rec)rec=(_currentHistoryRecs||[]).find(function(x){return String(x.id)===String(id);});
+  if(!rec)rec=(_allRecsCache||[]).find(function(x){return String(x.id)===String(id);});
+  if(!rec){alert('ไม่พบรายการ กรุณาโหลดประวัติใหม่');return;}
+  var win=window.open('','_blank','width=760,height=720');
+  var materials=rec.materials;if(typeof materials==='string'){try{materials=JSON.parse(materials);}catch(e){materials=[];}}
+  var matHtml='';
+  (materials||[]).forEach(function(m){matHtml+='<tr><td>'+esc(m.code)+'</td><td>'+esc(m.desc)+'</td><td>'+esc(m.unit||'')+'</td><td style="text-align:right">'+m.qty+'</td><td style="text-align:right">'+fmt(m.price)+'</td><td style="text-align:right">'+fmt(m.price*m.qty*1.31*1.15)+'</td></tr>';});
+  var photos=rec.photos;if(typeof photos==='string'){try{photos=JSON.parse(photos);}catch(e){photos={};}}
+  var photoHtml='';
+  if(photos){
+    var m0=photos.meter&&photos.meter[0];
+    photoHtml='<h3 style="margin:14px 0 8px;color:#4a1660">ภาพถ่ายประกอบการปฏิบัติงาน</h3><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">';
+    photoHtml+='<div><div style="font-size:12px;font-weight:600;color:#4a1660;margin-bottom:4px">PEA. มิเตอร์</div>'+(m0?'<img src="'+m0+'" style="width:100%;border-radius:6px;border:1px solid #ccc">':'<div style="background:#f3f4f6;border-radius:6px;height:80px;display:flex;align-items:center;justify-content:center;color:#9ca3af;font-size:12px">ไม่มีรูป</div>')+'</div>';
+    photoHtml+='<div><div style="font-size:12px;font-weight:600;color:#4a1660;margin-bottom:4px">ภาพปฏิบัติงาน</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:4px">';
+    [0,1].forEach(function(i){var w=photos.work&&photos.work[i];photoHtml+=w?'<img src="'+w+'" style="width:100%;border-radius:4px;border:1px solid #ccc">':'<div style="background:#f3f4f6;border-radius:4px;height:65px;display:flex;align-items:center;justify-content:center;color:#9ca3af;font-size:11px">ไม่มีรูป</div>';});
+    photoHtml+='</div></div><div><div style="font-size:12px;font-weight:600;color:#4a1660;margin-bottom:4px">ภาพอุปกรณ์แก้ไข</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:4px">';
+    [0,1].forEach(function(i){var eq=photos.equip&&photos.equip[i];photoHtml+=eq?'<img src="'+eq+'" style="width:100%;border-radius:4px;border:1px solid #ccc">':'<div style="background:#f3f4f6;border-radius:4px;height:65px;display:flex;align-items:center;justify-content:center;color:#9ca3af;font-size:11px">ไม่มีรูป</div>';});
+    photoHtml+='</div></div></div>';
+  }
+  win.document.write('<!DOCTYPE html><html><head><title>บร.1</title><meta charset="UTF-8"><link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet"><style>body{font-family:Sarabun,sans-serif;padding:22px;color:#111}table{width:100%;border-collapse:collapse}th,td{border:1px solid #aaa;padding:7px 10px;font-size:13px}th{background:#4a1660;color:#fff}.total{background:#f0f0f0;font-weight:700}.grand{background:#4a1660;color:#fff;font-weight:700}h2,h3{color:#4a1660}p{margin:3px 0;font-size:13px}.ig{display:grid;grid-template-columns:1fr 1fr;gap:3px 22px;margin-bottom:12px}</style></head><body>');
+  win.document.write('<h2>ค่าบริการงานแก้กระแสไฟฟ้าขัดข้อง (บร.1)</h2><hr style="margin:8px 0 12px">');
+  win.document.write('<div class="ig"><p><b>กฟภ.สาขา:</b> '+esc(rec.branch)+'</p><p><b>PEA:</b> '+esc(rec.pea)+'</p><p><b>ผู้ใช้ไฟฟ้า:</b> '+esc(rec.customer)+'</p><p><b>ที่อยู่:</b> '+esc(rec.address)+'</p><p><b>พิกัด:</b> '+esc(rec.coords)+'</p><p><b>วันที่:</b> '+esc(rec.datetime)+'</p></div>');
+  if(matHtml)win.document.write('<h3 style="margin:12px 0 6px">รายการพัสดุ</h3><table><thead><tr><th>รหัส</th><th>รายละเอียด</th><th>หน่วย</th><th>จำนวน</th><th>ราคากลาง</th><th>ราคารวม</th></tr></thead><tbody>'+matHtml+'</tbody></table>');
+  win.document.write('<h3 style="margin:12px 0 6px">สรุปค่าบริการ</h3><table><thead><tr><th>ลำดับ</th><th>รายการ</th><th>จำนวนเงิน</th></tr></thead><tbody>');
+  win.document.write('<tr><td>1</td><td>ปลด-สับอุปกรณ์ตัดตอนแรงสูง</td><td style="text-align:right">'+fmt(rec.part1)+' บาท</td></tr>');
+  win.document.write('<tr><td>2</td><td>ค่าบริการตรวจสอบ ('+rec.part2Minutes+' นาที x 9.50)</td><td style="text-align:right">'+fmt(rec.part2)+' บาท</td></tr>');
+  win.document.write('<tr><td>3</td><td>ค่าอุปกรณ์ในการแก้ไข</td><td style="text-align:right">'+fmt(rec.part3)+' บาท</td></tr>');
+  win.document.write('<tr class="total"><td colspan="2" style="text-align:right">ยอดรวม</td><td style="text-align:right">'+fmt(rec.total)+' บาท</td></tr>');
+  win.document.write('<tr class="total"><td colspan="2" style="text-align:right">ภาษี 7%</td><td style="text-align:right">'+fmt(rec.vat)+' บาท</td></tr>');
+  win.document.write('<tr class="grand"><td colspan="2" style="text-align:right">รวมทั้งสิ้น</td><td style="text-align:right">'+fmt(rec.grand)+' บาท</td></tr></tbody></table>');
+  win.document.write(photoHtml);
+  win.document.write('<div style="display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:16px"><div><p><b>ผู้ให้บริการ:</b> '+esc(rec.provider)+'</p><p><b>ตำแหน่ง:</b> '+esc(rec.position)+'</p></div><div><p><b>ผู้รับบริการ:</b> '+esc(rec.receiver)+'</p><p><b>โทร:</b> '+esc(rec.phone)+'</p></div></div>');
+  if(rec.editedAt)win.document.write('<p style="margin-top:10px;font-size:11px;color:#9ca3af">แก้ไขล่าสุด: '+new Date(rec.editedAt).toLocaleString('th-TH')+' โดย '+esc(rec.editedBy)+'</p>');
+  win.document.write('<br><button onclick="window.print()" style="padding:8px 18px;background:#4a1660;color:#fff;border:none;border-radius:6px;cursor:pointer;font-family:Sarabun,sans-serif">พิมพ์</button></body></html>');
+  win.document.close();
+}
+// ── ADMIN USERS ──
+var _usersCache = [];
+var _allRecsCache = [];
+
+function renderUsers(){
+  callGASL('getUsers',{},'กำลังโหลดผู้ใช้...',function(e,r){
+    if(e||!r||!r.ok){document.getElementById('userTable').innerHTML='<p style="color:#dc2626;padding:20px">โหลดข้อมูลไม่สำเร็จ</p>';return;}
+    _usersCache=r.data||[];
+    callGAS('getRecords',{role:'admin'},function(e2,r2){
+      _allRecsCache=(r2&&r2.data)||[];
+      var html='<div style="overflow-x:auto"><table><thead><tr><th>ชื่อ</th><th>รหัสประจำตัว</th><th>รหัสผ่าน</th><th>สาขา</th><th>ตำแหน่ง</th><th>บทบาท</th><th>สถานะ</th><th>จัดการ</th></tr></thead><tbody>';
+      _usersCache.forEach(function(u){
+        var badge=u.status==='approved'?'badge-green':u.status==='pending'?'badge-yellow':'badge-red';
+        var stTH=u.status==='approved'?'อนุมัติแล้ว':u.status==='pending'?'รออนุมัติ':'ปฏิเสธ';
+        var recCount=_allRecsCache.filter(function(r){return String(r.savedById)===String(u.id);}).length;
+        var uid=String(u.id).replace(/'/g,"\\'");
+        var uname=esc(u.name);
+        html+='<tr><td>'+uname+'</td><td><code style="background:#f3f4f6;padding:2px 6px;border-radius:4px;font-size:12px">'+esc(u.username)+'</code></td>';
+        html+='<td><code style="background:#fef3c7;padding:2px 6px;border-radius:4px;font-size:12px">'+esc(u.password||'')+'</code></td>';
+        html+='<td>'+esc(u.branch||'-')+'</td><td>'+esc(u.position||'-')+'</td>';
+        html+='<td><span class="badge '+(u.role==='admin'?'badge-blue':'badge-green')+'">'+u.role+'</span></td>';
+        html+='<td><span class="badge '+badge+'">'+stTH+'</span></td>';
+        html+='<td><div style="display:flex;gap:4px;flex-wrap:wrap">';
+        html+='<button class="btn btn-warning btn-sm" onclick="openEditUserById(\''+uid+'\')">แก้ไข</button>';
+        html+='<button class="btn btn-outline btn-sm" onclick="openUserHistoryById(\''+uid+'\')">ประวัติ'+(recCount>0?' <span style="background:#742582;color:#fff;border-radius:20px;padding:1px 6px;font-size:11px">'+recCount+'</span>':'')+'</button>';
+        if(u.status==='pending')html+='<button class="btn btn-success btn-sm" onclick="approveUser(\''+uid+'\')">✓</button><button class="btn btn-danger btn-sm" onclick="rejectUser(\''+uid+'\')">✗</button>';
+        if(u.id!==currentUser.id)html+='<button class="btn btn-danger btn-sm" onclick="deleteUser(\''+uid+'\')">ลบ</button>';
+        html+='</div></td></tr>';
+      });
+      html+='</tbody></table></div>';
+      document.getElementById('userTable').innerHTML=html;
+    });
+  });
+}
+function approveUser(id){callGASL('updateUser',{id:id,status:'approved'},'กำลังอัปเดต...',function(e,r){if(!e&&r&&r.ok)renderUsers();else alert('เกิดข้อผิดพลาด');});}
+function rejectUser(id){callGASL('updateUser',{id:id,status:'rejected'},'กำลังอัปเดต...',function(e,r){if(!e&&r&&r.ok)renderUsers();else alert('เกิดข้อผิดพลาด');});}
+function deleteUser(id){
+  if(!confirm('ต้องการลบผู้ใช้นี้?'))return;
+  callGASL('deleteUser',{id:id},'กำลังลบ...',function(e,r){if(!e&&r&&r.ok)renderUsers();else alert('เกิดข้อผิดพลาด');});
+}
+function openEditUserById(id){
+  var u=_usersCache.find(function(x){return String(x.id)===String(id);});
+  if(!u)return;
+  openEditUser(u);
+}
+function openUserHistoryById(id){
+  var u=_usersCache.find(function(x){return String(x.id)===String(id);});
+  if(!u)return;
+  openUserHistory(id,u.name,_allRecsCache);
+}
+function openEditUser(u){
+  document.getElementById('eu_id').value=u.id;document.getElementById('eu_name').value=u.name||'';
+  document.getElementById('eu_username').value=u.username||'';document.getElementById('eu_email').value=u.email||'';
+  document.getElementById('eu_position').value=u.position||'';document.getElementById('eu_branch').value=u.branch||'';
+  document.getElementById('euBranchDropdown').style.display='none';document.getElementById('eu_role').value=u.role||'user';
+  document.getElementById('eu_status').value=u.status||'approved';document.getElementById('eu_password').value='';
+  document.getElementById('editUserAlert').innerHTML='';document.getElementById('editUserModal').style.display='flex';
+}
+function closeEditUser(){document.getElementById('editUserModal').style.display='none';}
+function saveEditUser(){
+  var id=document.getElementById('eu_id').value;
+  var name=gv('eu_name'),email=gv('eu_email'),position=gv('eu_position'),branch=gv('eu_branch'),
+      role=gv('eu_role'),status=gv('eu_status'),newpass=document.getElementById('eu_password').value.trim();
+  if(!name){showAlert('editUserAlert','กรุณากรอกชื่อ','danger');return;}
+  var data={id:id,name:name,email:email,position:position,branch:branch,role:role,status:status};
+  if(newpass)data.password=newpass;
+  callGASL('updateUser',data,'กำลังบันทึก...',function(e,r){
+    if(e||!r||!r.ok){showAlert('editUserAlert','เกิดข้อผิดพลาด','danger');return;}
+    showAlert('editUserAlert','บันทึกสำเร็จ ✅','success');setTimeout(function(){closeEditUser();renderUsers();},900);
+  });
+}
+var _currentHistoryRecs = [];
+var _currentHistoryUserId = '';
+var _currentHistoryUserName = '';
+
+function openUserHistory(userId,userName,allRecs){
+  _currentHistoryRecs = allRecs||[];
+  _currentHistoryUserId = userId;
+  _currentHistoryUserName = userName;
+  document.getElementById('userHistoryTitle').textContent='ประวัติ บร.1 ของ: '+userName;
+  var recs=_currentHistoryRecs.filter(function(r){return String(r.savedById)===String(userId);});
+  var html='';
+  if(!recs.length){html='<p style="color:#9ca3af;text-align:center;padding:24px">ยังไม่มีรายการบันทึก</p>';}
+  else{
+    html='<div style="margin-bottom:8px;font-size:13px;color:#6b7280">พบ '+recs.length+' รายการ</div>';
+    html+='<div style="overflow-x:auto"><table><thead><tr><th>วันที่บันทึก</th><th>ผู้ใช้ไฟฟ้า</th><th>PEA</th><th>สาขา</th><th style="text-align:right">รวมทั้งสิ้น</th><th></th></tr></thead><tbody>';
+    recs.forEach(function(r){
+      var dt=r.savedAt?new Date(r.savedAt).toLocaleString('th-TH'):'';
+      var rid=String(r.id).replace(/'/g,"\\'");
+      html+='<tr><td>'+dt+'</td><td>'+esc(r.customer||'-')+'</td><td>'+esc(r.pea||'-')+'</td><td>'+esc(r.branch||'-')+'</td>';
+      html+='<td style="text-align:right;font-weight:600;color:#4a1660">'+fmt(r.grand)+' ฿</td>';
+      html+='<td style="white-space:nowrap;display:flex;gap:4px">';
+      html+='<button class="btn btn-outline btn-sm" onclick="viewRecord(\''+rid+'\')">ดู</button>';
+      html+='<button class="btn btn-warning btn-sm" onclick="openEditRecordById(\''+rid+'\');closeUserHistory()">แก้ไข</button>';
+      html+='<button class="btn btn-danger btn-sm" onclick="deleteRecordFromModal(\''+rid+'\')">ลบ</button>';
+      html+='</td></tr>';
+    });
+    html+='</tbody></table></div>';
+  }
+  document.getElementById('userHistoryContent').innerHTML=html;
+  document.getElementById('userHistoryModal').style.display='flex';
+}
+function closeUserHistory(){document.getElementById('userHistoryModal').style.display='none';}
+function deleteRecordFromModal(recId){
+  if(!confirm('ต้องการลบรายการนี้?'))return;
+  callGASL('deleteRecord',{id:recId},'กำลังลบ...',function(e,r){
+    if(e||!r||!r.ok){alert('เกิดข้อผิดพลาด');return;}
+    _currentHistoryRecs=_currentHistoryRecs.filter(function(r){return String(r.id)!==String(recId);});
+    renderHistory();
+    openUserHistory(_currentHistoryUserId,_currentHistoryUserName,_currentHistoryRecs);
+  });
+}
+
+// ── MAT TABLE ──
+function addMat(){matRows.push({id:Date.now(),code:'',desc:'',unit:'',qty:1,price:0});renderMatTable();}
+function renderMatTable(){
+  var mats=getFormMaterials();var html='';
+  matRows.forEach(function(row){
+    var opts='<option value="">-- เลือกพัสดุ --</option>';
+    mats.forEach(function(m){opts+='<option value="'+m.code+'" '+(row.code===m.code?'selected':'')+'>'+esc(m.code)+' | '+esc(m.desc)+'</option>';});
+    var total=row.price*row.qty*1.31*1.15;
+    html+='<tr><td><select onchange="matCodeChange('+row.id+',this)" style="font-size:12px">'+opts+'</select></td>';
+    html+='<td><input type="text" value="'+esc(row.desc)+'" readonly style="font-size:13px"></td>';
+    html+='<td><input type="text" value="'+esc(row.unit)+'" readonly style="width:58px;font-size:13px"></td>';
+    html+='<td><input type="text" inputmode="numeric" value="'+row.qty+'" style="width:65px;font-size:13px" onchange="matQtyChange('+row.id+',this)"></td>';
+    html+='<td><input type="text" value="'+fmt(row.price)+'" readonly style="font-size:13px"></td>';
+    html+='<td style="font-weight:600;color:#4a1660;font-size:13px">'+fmt(total)+'</td>';
+    html+='<td><button class="btn btn-danger btn-sm" onclick="removeMat('+row.id+')">X</button></td></tr>';
+  });
+  if(!matRows.length)html='<tr><td colspan="7" style="text-align:center;color:#9ca3af;padding:18px">ยังไม่มีรายการพัสดุ</td></tr>';
+  document.getElementById('matBody').innerHTML=html;calcAll();
+}
+function matCodeChange(id,sel){
+  var m=cache.materials.find(function(x){return x.code===sel.value;});
+  var row=matRows.find(function(r){return r.id===id;});
+  if(row){row.code=sel.value;row.desc=m?m.desc:'';row.unit=m?m.unit||'':'';row.price=m?m.price:0;}
+  renderMatTable();
+}
+function matQtyChange(id,inp){var row=matRows.find(function(r){return r.id===id;});if(row)row.qty=parseFloat(inp.value)||1;calcAll();}
+function removeMat(id){matRows=matRows.filter(function(r){return r.id!==id;});renderMatTable();}
+
+// ── CALC ──
+function calcAll(){
+  var p1=document.getElementById('part1Check').checked?570:0;
+  document.getElementById('part1Label').classList.toggle('checked',p1>0);
+  var mins=parseFloat(document.getElementById('part2Minutes').value)||0,p2=mins*9.5;
+  document.getElementById('part2Total').value=fmt(p2)+' บาท';
+  var p3=0;matRows.forEach(function(r){p3+=r.price*r.qty*1.31*1.15;});
+  document.getElementById('part3Total').textContent=fmt(p3);
+  var total=p1+p2+p3,vat=total*0.07,grand=total+vat;
+  [['s1',p1],['s2',p2],['s3',p3],['sTotal',total],['sVat',vat],['sGrand',grand]].forEach(function(x){document.getElementById(x[0]).textContent=fmt(x[1]);});
+}
+
+// ── PHOTOS ──
+function triggerPhoto(g,i){document.getElementById('slot_'+g+'_'+i).querySelector('input[type=file]').click();}
+function handlePhoto(g,i,input){
+  var file=input.files[0];if(!file)return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    var img=new Image();
+    img.onload=function(){
+      var canvas=document.createElement('canvas');var MAX=1200,w=img.width,h=img.height;
+      if(w>MAX){h=Math.round(h*MAX/w);w=MAX;}if(h>MAX){w=Math.round(w*MAX/h);h=MAX;}
+      canvas.width=w;canvas.height=h;canvas.getContext('2d').drawImage(img,0,0,w,h);
+      var b64=canvas.toDataURL('image/jpeg',0.75);photoData[g][i]=b64;renderPhotoSlot(g,i,b64);
+    };img.src=e.target.result;
+  };reader.readAsDataURL(file);
+}
+function renderPhotoSlot(g,i,b64){
+  var slot=document.getElementById('slot_'+g+'_'+i);if(!slot)return;
+  if(b64){slot.classList.add('has-img');slot.querySelector('.ph').style.display='none';var img=slot.querySelector('img');if(!img){img=document.createElement('img');slot.insertBefore(img,slot.firstChild);}img.src=b64;}
+  else{slot.classList.remove('has-img');slot.querySelector('.ph').style.display='';var img2=slot.querySelector('img');if(img2)img2.remove();}
+}
+function removePhoto(g,i,event){
+  event.stopPropagation();photoData[g][i]=null;renderPhotoSlot(g,i,null);
+  var slot=document.getElementById('slot_'+g+'_'+i);if(slot){var inp=slot.querySelector('input[type=file]');if(inp)inp.value='';}
+}
+function resetPhotoSlots(){
+  photoData={meter:[null],work:[null,null],equip:[null,null]};
+  [['meter',1],['work',2],['equip',2]].forEach(function(x){for(var i=0;i<x[1];i++)renderPhotoSlot(x[0],i,null);});
+}
+
+// ── NAV ──
+function switchTab(t){
+  ['BR1','History','Admin'].forEach(function(x){document.getElementById('tab'+x).classList.remove('active');var n=document.getElementById('nav'+x);if(n)n.classList.remove('active');});
+  var map={br1:'BR1',history:'History',admin:'Admin'};
+  document.getElementById('tab'+map[t]).classList.add('active');document.getElementById('nav'+map[t]).classList.add('active');
+  if(t==='history')renderHistory();
+  if(t==='admin'){renderUsers();renderBranches();renderMaterials();renderCustomers();}
+}
+function switchAdminTab(t){
+  var tabs=['users','branches','customers','materials'];
+  document.querySelectorAll('#adminTabs .tab').forEach(function(el,i){el.classList.toggle('active',tabs[i]===t);});
+  ['atUsers','atBranches','atCustomers','atMaterials'].forEach(function(id){document.getElementById(id).classList.remove('active');});
+  var map={users:'atUsers',branches:'atBranches',customers:'atCustomers',materials:'atMaterials'};
+  document.getElementById(map[t]).classList.add('active');
+  if(t==='users')renderUsers();if(t==='branches')renderBranches();if(t==='customers')renderCustomers();if(t==='materials')renderMaterials();
+}
+
+// ── UTILS ──
+function gv(id){return(document.getElementById(id)?document.getElementById(id).value:'').trim();}
+function setNow(){
+  var now=new Date();
+  var thM=['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+  var pad=function(n){return String(n).padStart(2,'0');};
+  var display=now.getDate()+' '+thM[now.getMonth()]+' '+(now.getFullYear()+543)+' '+pad(now.getHours())+':'+pad(now.getMinutes())+' น.';
+  var iso=now.getFullYear()+'-'+pad(now.getMonth()+1)+'-'+pad(now.getDate())+'T'+pad(now.getHours())+':'+pad(now.getMinutes());
+  document.getElementById('f_datetime_display').value=display;document.getElementById('f_datetime').value=iso;
+}
+function syncDatetimeFromDisplay(){document.getElementById('f_datetime').value=document.getElementById('f_datetime_display').value;}
+function getDatetimeValue(){return document.getElementById('f_datetime_display').value||document.getElementById('f_datetime').value;}
+function getLocation(){
+  if(navigator.geolocation){
+    document.getElementById('f_coords').value='กำลังระบุพิกัด...';
+    navigator.geolocation.getCurrentPosition(
+      function(p){document.getElementById('f_coords').value=p.coords.latitude.toFixed(6)+', '+p.coords.longitude.toFixed(6);},
+      function(){document.getElementById('f_coords').value='ไม่สามารถระบุพิกัดได้';}
+    );
+  } else document.getElementById('f_coords').value='เบราว์เซอร์ไม่รองรับ GPS';
+}
+function showAlert(id,msg,type){document.getElementById(id).innerHTML='<div class="alert alert-'+type+'">'+msg+'</div>';}
+function fmt(n){return(parseFloat(n)||0).toLocaleString('th-TH',{minimumFractionDigits:2,maximumFractionDigits:2});}
+function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+setNow();renderMatTable();
+</script>
+</body>
+</html>
