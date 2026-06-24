@@ -385,7 +385,8 @@ function saveProfile(){
 function loadAllCache(cb){
   showLoading('กำลังโหลดข้อมูล...');
   var done = 0;
-  function check(){done++;if(done===3){hideLoading();if(cb)cb();}}
+  function check(){done++;if(done===4){hideLoading();if(cb)cb();}}
+  loadSettings(check);
   loadMaterials(check);
   loadCustomers(check);
   loadBranches(check);
@@ -2126,26 +2127,74 @@ function switchTab(t){
   }
 }
 function switchAdminTab(t){
-  var tabs = ['users','branches','customers','materials'];
+  var tabs = ['users','branches','customers','settings','materials'];
   document.querySelectorAll('#adminTabs .tab')
     .forEach(function(el,i){
       el.classList.toggle('active',tabs[i]===t);
     });
-  var ids = ['atUsers','atBranches','atCustomers','atMaterials'];
+  var ids = ['atUsers','atBranches','atCustomers','atSettings','atMaterials'];
   ids.forEach(function(id){
     document.getElementById(id).classList.remove('active');
   });
   var map = {
     users:'atUsers',branches:'atBranches',
-    customers:'atCustomers',materials:'atMaterials'
+    customers:'atCustomers',settings:'atSettings',materials:'atMaterials'
   };
   document.getElementById(map[t]).classList.add('active');
   if(t==='users') renderUsers();
   if(t==='branches') renderBranches();
   if(t==='customers') renderCustomers();
   if(t==='materials') renderMaterials();
+  if(t==='settings'){
+    var inp = document.getElementById('set_refPrice');
+    if(inp) inp.value = appSettings.refPrice||'';
+  }
 }
 
+
+
+// -- SETTINGS --
+var appSettings = {};
+
+function loadSettings(cb){
+  db.collection('settings').doc('main').get()
+    .then(function(doc){
+      if(doc.exists){
+        appSettings = doc.data();
+        showRefPrice();
+      }
+      if(cb) cb();
+    })
+    .catch(function(){if(cb) cb();});
+}
+function saveSettings(){
+  var refPrice = gv('set_refPrice');
+  showLoading('กำลังบันทึก...');
+  db.collection('settings').doc('main')
+    .set({refPrice: refPrice},{merge:true})
+    .then(function(){
+      hideLoading();
+      appSettings.refPrice = refPrice;
+      showRefPrice();
+      showAlert('settingsAlert','บันทึกสำเร็จ','success');
+    })
+    .catch(function(){
+      hideLoading();
+      showAlert('settingsAlert','เกิดข้อผิดพลาด','danger');
+    });
+}
+function showRefPrice(){
+  var banner = document.getElementById('refPriceBanner');
+  var text = document.getElementById('refPriceText');
+  if(!banner || !text) return;
+  if(appSettings.refPrice){
+    text.textContent =
+      'ราคามาตราอ้างอิง: ' + appSettings.refPrice;
+    banner.style.display = 'flex';
+  } else {
+    banner.style.display = 'none';
+  }
+}
 
 // -- ADMIN DELETE ALL --
 function deleteAllRecords(){

@@ -258,7 +258,7 @@ tr:hover td{background:#f8fafc}
 <div class="auth-wrap">
 <div class="login-card">
 <div class="login-logo">
-<img src="images/PEA-Logo.jpg" alt="PEA" onerror="this.style.display='none'" style="width:140px;height:auto;margin-bottom:10px"><br>
+<img src="images/PEA-Logo.png" alt="PEA" onerror="this.style.display='none'" style="width:140px;height:auto;margin-bottom:10px"><br>
 <h1>การไฟฟ้าส่วนภูมิภาค</h1>
 <p>ระบบค่าบริการงานแก้กระแสไฟฟ้าขัดข้อง (บร.1)</p>
 </div>
@@ -321,6 +321,7 @@ tr:hover td{background:#f8fafc}
 <!-- BR1 FORM -->
 <div id="tabBR1" class="tab-content active">
 <div class="card" style="margin-bottom:18px">
+<div id="refPriceBanner" style="display:none;background:#e9d5f7;color:#4a1660;padding:10px 16px;border-radius:8px;margin-bottom:14px;font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px"><i class="fa fa-bookmark"></i> <span id="refPriceText"></span></div>
 <div class="section-title"><i class="fa fa-bolt" style="color:#d97706"></i> ค่าบริการงานแก้กระแสไฟฟ้าขัดข้อง (บร.1)</div>
 <div class="grid-2">
 <div class="form-group"><label>กฟภ.สาขา (จากข้อมูล User)</label><input type="text" id="f_branch" readonly></div>
@@ -427,6 +428,7 @@ tr:hover td{background:#f8fafc}
 <div class="tab active" onclick="switchAdminTab('users')"><i class="fa fa-users"></i> ผู้ใช้งาน</div>
 <div class="tab" onclick="switchAdminTab('branches')"><i class="fa fa-building"></i> กฟฟ./สาขา</div>
 <div class="tab" onclick="switchAdminTab('customers')"><i class="fa fa-house-user"></i> ผู้ใช้ไฟฟ้า</div>
+<div class="tab" onclick="switchAdminTab('settings')"><i class="fa fa-sliders"></i> ตั้งค่า</div>
 <div class="tab" onclick="switchAdminTab('materials')"><i class="fa fa-box"></i> พัสดุ</div>
 </div>
 <div id="atUsers" class="tab-content active"><div class="card"><div class="section-title"><i class="fa fa-users"></i> รายการผู้ใช้งาน</div><div id="userTable"></div></div></div>
@@ -472,6 +474,19 @@ tr:hover td{background:#f8fafc}
 <div id="csvCustPreview" style="margin-top:12px"></div>
 </div>
 <div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><div class="section-title" style="margin-bottom:0;border-bottom:none;padding-bottom:0"><i class="fa fa-house-user"></i> รายการผู้ใช้ไฟฟ้าทั้งหมด</div><button class="btn btn-danger btn-sm" onclick="deleteAllCustomers()"><i class="fa fa-trash"></i> ลบทั้งหมด</button></div><div style="margin-bottom:10px"><input type="text" id="custSearch" placeholder="ค้นหา PEA หรือชื่อ..." placeholder="ค้นหา PEA หรือชื่อ..." style="max-width:300px" oninput="renderCustomers()"></div><div id="customerTable"></div></div>
+</div>
+
+<div id="atSettings" class="tab-content">
+<div class="card">
+<div class="section-title"><i class="fa fa-sliders"></i> ตั้งค่าระบบ</div>
+<div class="form-group">
+<label>ราคามาตราอ้างอิงงวดที่</label>
+<input type="text" id="set_refPrice" placeholder="เช่น งวดที่ 1/2569 (ม.ค. - มิ.ย. 2569)">
+<div style="font-size:11px;color:#6b7280;margin-top:3px">จะแสดงด้านบนของหน้า บร.1</div>
+</div>
+<button class="btn btn-primary" onclick="saveSettings()"><i class="fa fa-floppy-disk"></i> บันทึกตั้งค่า</button>
+<div id="settingsAlert" style="margin-top:10px"></div>
+</div>
 </div>
 <div id="atMaterials" class="tab-content">
 <div class="card" style="margin-bottom:14px">
