@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>บร.1 - ค่าบริการงานแก้กระแสไฟฟ้าขัดข้อง</title>
+<title>ระบบค่าบริการงานแก้กระแสไฟฟ้าขัดข้อง (บร.1)</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Sarabun',sans-serif;background:#f0f4f8;color:#1a202c;font-size:15px}
@@ -32,7 +32,7 @@ tr:hover td{background:#f8fafc}
 #app{min-height:100vh}
 .navbar{background:#4a1660;color:#fff;padding:0 16px;display:flex;align-items:center;justify-content:space-between;height:56px;position:sticky;top:0;z-index:100}
 .navbar-brand{font-size:15px;font-weight:700;color:#fff;display:flex;align-items:center;gap:8px}
-.navbar-nav{display:flex;align-items:center;gap:8px;flex-wrap:nowrap;overflow-x:auto}
+.navbar-nav{display:flex;align-items:center;gap:4px;flex-wrap:wrap}
 .nav-link{color:rgba(255,255,255,.8);padding:5px 12px;border-radius:6px;font-size:13px;cursor:pointer;transition:all .2s}
 .nav-link:hover,.nav-link.active{background:rgba(255,255,255,.15);color:#fff}
 .container{max-width:1160px;margin:0 auto;padding:24px 16px}
@@ -92,6 +92,26 @@ tr:hover td{background:#f8fafc}
 .db-status{display:inline-flex;align-items:center;gap:5px;font-size:11px;padding:3px 9px;border-radius:20px;background:rgba(255,255,255,.15);color:#fff}
 .db-dot{width:7px;height:7px;border-radius:50%;background:#4ade80}
 .db-dot.err{background:#f87171}
+
+
+.hide-mobile{display:table-cell}
+@media(max-width:768px){
+.hide-mobile{display:none!important}
+#matBody input[type=text]{font-size:12px!important}
+#matBody input[type=number]{width:50px!important;font-size:12px!important}
+#matBody td{padding:4px!important}
+}
+@media(max-width:768px){
+.navbar{flex-direction:column;height:auto;padding:8px 12px;gap:6px}
+.navbar-brand{font-size:13px}
+.navbar-nav{gap:2px;justify-content:center}
+.nav-link{padding:4px 8px;font-size:12px}
+.container{padding:12px 8px}
+.card{padding:14px}
+.section-title{font-size:14px}
+#tabBR1 .card:first-child .section-title{font-size:18px;color:#4a1660}
+.login-card{padding:24px 18px}
+}
 @media print{.navbar,.no-print{display:none!important}.container{padding:0}.card{box-shadow:none;border:1px solid #e2e8f0}body{background:#fff}}
 </style>
 <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -215,12 +235,30 @@ tr:hover td{background:#f8fafc}
 <div id="userHistoryContent"></div>
 </div></div>
 
+
+<!-- SIGNATURE MODAL -->
+<div id="sigModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.8);flex-direction:column;align-items:center;justify-content:center;padding:16px">
+<div style="background:#fff;border-radius:12px;width:100%;max-width:600px;height:70vh;display:flex;flex-direction:column;overflow:hidden">
+<div style="padding:12px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #e2e8f0">
+<div style="font-weight:700;color:#4a1660;font-size:16px"><i class="fa fa-pen-nib"></i> เซ็นชื่อผู้รับบริการ</div>
+<span style="cursor:pointer;color:#9ca3af;font-size:22px" onclick="cancelSigModal()">x</span>
+</div>
+<div style="flex:1;padding:8px;background:#f8fafc">
+<canvas id="sigModalCanvas" style="width:100%;height:100%;cursor:crosshair;touch-action:none;background:#fff;border-radius:8px;border:1px solid #e2e8f0;display:block"></canvas>
+</div>
+<div style="padding:12px 16px;display:flex;gap:10px;justify-content:flex-end;border-top:1px solid #e2e8f0">
+<button class="btn btn-outline" onclick="clearSigModal()"><i class="fa fa-eraser"></i> ล้าง</button>
+<button class="btn btn-outline" onclick="cancelSigModal()">ยกเลิก</button>
+<button class="btn btn-success" onclick="saveSigModal()"><i class="fa fa-check"></i> ยืนยัน</button>
+</div>
+</div>
+</div>
 <!-- LOGIN -->
 <div id="loginPage" class="page active">
 <div class="auth-wrap">
 <div class="login-card">
 <div class="login-logo">
-<img src="images/PEA-Logo.png" alt="PEA" onerror="this.style.display='none'" style="width:150px;height:auto;margin-bottom:10px">
+<img src="images/PEA-Logo.jpg" alt="PEA" onerror="this.style.display='none'" style="width:140px;height:auto;margin-bottom:10px"><br>
 <h1>การไฟฟ้าส่วนภูมิภาค</h1>
 <p>ระบบค่าบริการงานแก้กระแสไฟฟ้าขัดข้อง (บร.1)</p>
 </div>
@@ -268,10 +306,10 @@ tr:hover td{background:#f8fafc}
 <!-- MAIN APP -->
 <div id="mainApp" class="page">
 <nav class="navbar">
-<div class="navbar-brand"><img src="images/PEA-Logo.jpg" alt="PEA" onerror="this.style.display='none'" style="height:36px"> ค่าบริการงานแก้กระแสไฟฟ้าขัดข้อง (บร.1)</div>
+<div class="navbar-brand"><img src="images/PEA-Logo.jpg" alt="PEA" onerror="this.style.display='none'" style="height:36px"> ระบบค่าบริการงานแก้กระแสไฟฟ้าขัดข้อง (บร.1)</div>
 <div class="navbar-nav">
 <span class="db-status"><span class="db-dot" id="dbDot"></span><span id="dbStatusText">DB</span></span>
-<div class="nav-link active" id="navBR1" onclick="switchTab('br1')"><i class="fa fa-file-invoice"></i> บร.1</div>
+<div class="nav-link active" id="navBR1" onclick="switchTab('br1')" style="font-size:15px;font-weight:700;padding:6px 16px;background:rgba(255,255,255,.2);border-radius:8px"><i class="fa fa-file-invoice"></i> บร.1</div>
 <div class="nav-link" id="navHistory" onclick="switchTab('history')"><i class="fa fa-clock-rotate-left"></i> ประวัติ</div>
 <div class="nav-link" id="navAdmin" onclick="switchTab('admin')" style="display:none"><i class="fa fa-gear"></i> Admin</div>
 <div class="nav-link" id="navUser" onclick="openProfile()" style="cursor:pointer"></div>
@@ -310,8 +348,8 @@ tr:hover td{background:#f8fafc}
 </div></div>
 <div class="card" style="margin-bottom:18px">
 <div class="section-title">ส่วนที่ 3 - ค่าอุปกรณ์ในการแก้ไข</div>
-<div style="overflow-x:auto">
-<table><thead><tr><th>รหัสพัสดุ</th><th>รายละเอียด</th><th>หน่วย</th><th>จำนวน</th><th>ราคากลาง</th><th>ราคารวม (x131%x115%)</th><th></th></tr></thead><tbody id="matBody"></tbody></table>
+<div style="overflow:visible">
+<table><thead><tr><th>รหัสพัสดุ</th><th>รายละเอียด</th><th>หน่วย</th><th>จำนวน</th><th>ราคากลาง</th><th class="hide-mobile">ราคารวม (x131%x115%)</th><th></th></tr></thead><tbody id="matBody"></tbody></table>
 </div>
 <button class="btn btn-outline btn-sm" style="margin-top:10px" onclick="addMat()">+ เพิ่มรายการพัสดุ</button>
 <div style="text-align:right;margin-top:10px;font-weight:700;font-size:15px;color:#4a1660">รวมค่าอุปกรณ์: <span id="part3Total">0.00</span> บาท</div>
@@ -354,7 +392,16 @@ tr:hover td{background:#f8fafc}
 <div class="form-group"><label>ตำแหน่ง</label><input type="text" id="f_position" placeholder="ตำแหน่ง"></div></div>
 <div><div style="font-weight:600;margin-bottom:10px;color:#4a1660">ผู้รับบริการ</div>
 <div class="form-group"><label>ชื่อผู้รับบริการ</label><input type="text" id="f_receiver" placeholder="ชื่อผู้รับบริการ"></div>
-<div class="form-group"><label>เบอร์โทรศัพท์</label><input type="text" id="f_phone" placeholder="เบอร์โทรศัพท์"></div></div>
+<div class="form-group"><label>เบอร์โทรศัพท์</label><input type="text" id="f_phone" placeholder="เบอร์โทรศัพท์"></div>
+<div class="form-group">
+<label>ลายเซ็นผู้รับบริการ</label>
+<button class="btn btn-outline" onclick="openSignatureModal()" style="width:100%;justify-content:center;padding:12px">
+<i class="fa fa-pen-nib"></i> กดเพื่อเซ็นชื่อ
+</button>
+<div id="sigPreview" style="margin-top:8px">
+<span style="color:#9ca3af;font-size:13px">ยังไม่ได้เซ็นชื่อ</span>
+</div>
+</div></div>
 </div></div>
 <div class="no-print" style="display:flex;gap:10px;justify-content:flex-end;margin-bottom:28px">
 <button class="btn btn-outline" onclick="clearForm()"><i class="fa fa-eraser"></i> ล้างแบบฟอร์ม</button>
@@ -371,6 +418,7 @@ tr:hover td{background:#f8fafc}
 <span id="histCount" style="font-size:13px;color:#6b7280;margin-left:auto"></span>
 </div>
 <div id="historyTable"></div>
+<div style="margin-top:12px;text-align:right" id="histDeleteAll"></div>
 </div></div>
 
 <!-- ADMIN -->
@@ -400,7 +448,7 @@ tr:hover td{background:#f8fafc}
 <input type="file" id="csvBrFile" accept=".csv" style="display:none" onchange="handleBrCsvFile(this)">
 <div id="csvBrPreview" style="margin-top:12px"></div>
 </div>
-<div class="card"><div class="section-title"><i class="fa fa-building"></i> รายการ กฟฟ./สาขาทั้งหมด</div><div style="margin-bottom:10px"><input type="text" id="brSearch" placeholder="ค้นหาชื่อสาขา..." placeholder="ค้นหาสาขา..." style="max-width:300px" oninput="renderBranches()"></div><div id="branchTable"></div></div>
+<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><div class="section-title" style="margin-bottom:0;border-bottom:none;padding-bottom:0"><i class="fa fa-building"></i> รายการ กฟฟ./สาขาทั้งหมด</div><button class="btn btn-danger btn-sm" onclick="deleteAllBranches()"><i class="fa fa-trash"></i> ลบทั้งหมด</button></div><div style="margin-bottom:10px"><input type="text" id="brSearch" placeholder="ค้นหาชื่อสาขา..." placeholder="ค้นหาสาขา..." style="max-width:300px" oninput="renderBranches()"></div><div id="branchTable"></div></div>
 </div>
 <div id="atCustomers" class="tab-content">
 <div class="card" style="margin-bottom:14px">
@@ -423,7 +471,7 @@ tr:hover td{background:#f8fafc}
 <input type="file" id="csvCustFile" accept=".csv" style="display:none" onchange="handleCustCsvFile(this)">
 <div id="csvCustPreview" style="margin-top:12px"></div>
 </div>
-<div class="card"><div class="section-title"><i class="fa fa-house-user"></i> รายการผู้ใช้ไฟฟ้าทั้งหมด</div><div style="margin-bottom:10px"><input type="text" id="custSearch" placeholder="ค้นหา PEA หรือชื่อ..." placeholder="ค้นหา PEA หรือชื่อ..." style="max-width:300px" oninput="renderCustomers()"></div><div id="customerTable"></div></div>
+<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><div class="section-title" style="margin-bottom:0;border-bottom:none;padding-bottom:0"><i class="fa fa-house-user"></i> รายการผู้ใช้ไฟฟ้าทั้งหมด</div><button class="btn btn-danger btn-sm" onclick="deleteAllCustomers()"><i class="fa fa-trash"></i> ลบทั้งหมด</button></div><div style="margin-bottom:10px"><input type="text" id="custSearch" placeholder="ค้นหา PEA หรือชื่อ..." placeholder="ค้นหา PEA หรือชื่อ..." style="max-width:300px" oninput="renderCustomers()"></div><div id="customerTable"></div></div>
 </div>
 <div id="atMaterials" class="tab-content">
 <div class="card" style="margin-bottom:14px">
@@ -448,7 +496,7 @@ tr:hover td{background:#f8fafc}
 <input type="file" id="csvFile" accept=".csv" style="display:none" onchange="handleCsvFile(this)">
 <div id="csvPreview" style="margin-top:12px"></div>
 </div>
-<div class="card"><div class="section-title"><i class="fa fa-box"></i> รายการพัสดุทั้งหมด</div>
+<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><div class="section-title" style="margin-bottom:0;border-bottom:none;padding-bottom:0"><i class="fa fa-box"></i> รายการพัสดุทั้งหมด</div><button class="btn btn-danger btn-sm" onclick="deleteAllMaterials()"><i class="fa fa-trash"></i> ลบทั้งหมด</button></div>
 <div class="filter-bar">
 <label style="margin:0;font-weight:600;color:#4a1660">แสดง:</label>
 <label style="display:flex;align-items:center;gap:5px;margin:0;cursor:pointer"><input type="radio" name="matFilter" value="all" checked onchange="renderMaterials()"> ทั้งหมด</label>
@@ -461,7 +509,7 @@ tr:hover td{background:#f8fafc}
 </div>
 </div><!-- /container -->
 </div><!-- /mainApp -->
-<div style="text-align:center;padding:16px 0 20px;font-size:13px;color:#9ca3af;background:#f0f4f8;border-top:1px solid #e2e8f0" class="no-print">
+<div style="text-align:right;padding:16px 0 20px;font-size:13px;color:#9ca3af;background:#f0f4f8;border-top:1px solid #e2e8f0" class="no-print">
 Dev : ส.อ.ภูวณัตย์ ศรีจันทร์ | พชง.6 ผปร.กฟส.มัญจาคีรี
 </div>
 <!-- Firebase SDK -->

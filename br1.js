@@ -174,6 +174,7 @@ function loginSuccess(user){
   document.getElementById('mainApp')
     .classList.add('active');
   loadAllCache(function(){renderHistory();});
+  setTimeout(function(){initSignature();}, 300);
 }
 
 function doLogout(){
@@ -463,6 +464,24 @@ function buildBranchDD(inputId,ddId){
     dd.appendChild(item);
   });
   dd.style.display = 'block';
+  // เพิ่ม overlay
+  var ov = document.getElementById('matDDOverlay');
+  if(!ov){
+    ov = document.createElement('div');
+    ov.id = 'matDDOverlay';
+    ov.style.cssText =
+      'position:fixed;inset:0;background:rgba(0,0,0,.3);' +
+      'z-index:9998';
+    ov.onclick = closeMatDD;
+    document.body.appendChild(ov);
+  }
+  ov.style.display = 'block';
+}
+function closeMatDD(){
+  var dds = document.querySelectorAll('[id^="matDD_"]');
+  dds.forEach(function(dd){dd.style.display='none';});
+  var ov = document.getElementById('matDDOverlay');
+  if(ov) ov.style.display = 'none';
 }
 document.addEventListener('click',function(e){
   var pairs = [
@@ -615,7 +634,7 @@ function processBrCsv(file){
     ph += 'ยกเลิก</button></div>';
     document.getElementById('csvBrPreview').innerHTML = ph;
   };
-  reader.readAsText(file,'UTF-8');
+  reader.readAsText(file);
 }
 function importBrRows(rows){
   showLoading('กำลังนำเข้า...');
@@ -780,7 +799,7 @@ function processCustCsv(file){
     ph += 'ยกเลิก</button></div>';
     document.getElementById('csvCustPreview').innerHTML = ph;
   };
-  reader.readAsText(file,'UTF-8');
+  reader.readAsText(file);
 }
 function importCustRows(rows){
   showLoading('กำลังนำเข้า...');
@@ -948,7 +967,7 @@ function processCsvFile(file){
     ph += 'ยกเลิก</button></div>';
     document.getElementById('csvPreview').innerHTML = ph;
   };
-  reader.readAsText(file,'UTF-8');
+  reader.readAsText(file);
 }
 function importCsvRows(rows){
   showLoading('กำลังนำเข้า...');
@@ -1006,6 +1025,7 @@ function saveRecord(){
     position: gv('f_position'),
     receiver: gv('f_receiver'),
     phone: gv('f_phone'),
+    signature: sigData||null,
     photos: photoUrls
   };
   showLoading('กำลังบันทึกรายการ...');
@@ -1041,6 +1061,7 @@ function resetForm(){
   matRows = [];
   renderMatTable();
   resetPhotoSlots();
+  clearSignature();
   setNow();
   getLocation();
   calcAll();
@@ -1126,6 +1147,12 @@ function renderHistory(){
         h += '</tbody></table></div>';
       }
       document.getElementById('historyTable').innerHTML = h;
+      var delAll = document.getElementById('histDeleteAll');
+      if(delAll && currentUser.role==='admin' && recs.length){
+        delAll.innerHTML = '<button class="btn btn-danger btn-sm"'
+          +' onclick="deleteAllRecords()"'
+          +'><i class="fa fa-trash"></i> ลบประวัติทั้งหมด ('+recs.length+')</button>';
+      } else if(delAll){ delAll.innerHTML=''; }
     })
     .catch(function(){
       hideLoading();
@@ -1361,40 +1388,7 @@ function viewRecord(id){
   r.push('<td style="text-align:right;padding:5px">');
   r.push(fmt(rec.grand)+'</td></tr>');
   r.push('</tbody></table>');
-  // อุปกรณ์คืน
-  r.push('<div style="font-weight:700;color:#4a1660;');
-  r.push('font-size:12px;margin:8px 0 3px;');
-  r.push('border-bottom:1px solid #4a1660;');
-  r.push('padding-bottom:3px">รายการอุปกรณ์คืน</div>');
-  r.push('<table style="font-size:11px"><thead>');
-  r.push('<tr style="background:#f8fafc">');
-  r.push('<th style="padding:4px">ลำดับ</th>');
-  r.push('<th style="padding:4px">รหัสพัสดุ</th>');
-  r.push('<th style="padding:4px">รายละเอียด</th>');
-  r.push('<th style="padding:4px">หน่วย</th>');
-  r.push('<th style="padding:4px">จำนวน</th>');
-  r.push('<th style="padding:4px">สภาพ</th>');
-  r.push('</tr></thead><tbody>');
-  if(mats&&mats.length){
-    (mats).forEach(function(m,i){
-      r.push('<tr>');
-      r.push('<td style="text-align:center;padding:3px">');
-      r.push((i+1)+'</td>');
-      r.push('<td style="padding:3px">'+esc(m.code)+'</td>');
-      r.push('<td style="padding:3px">'+esc(m.desc)+'</td>');
-      r.push('<td style="text-align:center;padding:3px">');
-      r.push(esc(m.unit||'')+'</td>');
-      r.push('<td style="text-align:center;padding:3px">');
-      r.push(m.qty+'</td>');
-      r.push('<td style="padding:3px">');
-      r.push('................................</td>');
-      r.push('</tr>');
-    });
-  } else {
-    r.push('<tr><td colspan="6" style="text-align:center;');
-    r.push('padding:8px;color:#999">- ไม่มีรายการ -</td></tr>');
-  }
-  r.push('</tbody></table>');
+
   // Photos
   r.push(phtml);
   // Signatures
@@ -1414,6 +1408,12 @@ function viewRecord(id){
   r.push('vertical-align:top">');
   r.push('<b style="color:#4a1660">ผู้รับบริการ</b><br>');
   r.push('ชื่อ: '+esc(rec.receiver)+'<br>');
+  if(rec.signature){
+    r.push('<div style="margin-top:4px">');
+    r.push('<img src="'+rec.signature+'"');
+    r.push(' style="max-width:180px;max-height:60px">');
+    r.push('</div>');
+  }
   r.push('โทร: '+esc(rec.phone));
   r.push('<div style="margin-top:20px;border-bottom:');
   r.push('1px dotted #999;width:180px"></div>');
@@ -1533,6 +1533,12 @@ function renderUsers(){
         h += '</div></td></tr>';
       });
       h += '</tbody></table></div>';
+      document.getElementById('userTable').innerHTML = h;
+      h += '<div style="margin-top:8px">';
+      h += '<button class="btn btn-danger btn-sm"';
+      h += ' onclick="deleteAllUsers()">';
+      h += '<i class="fa fa-trash"></i>';
+      h += ' ลบผู้ใช้ทั้งหมด</button></div>';
       document.getElementById('userTable').innerHTML = h;
     })
     .catch(function(){
@@ -1703,18 +1709,18 @@ function renderMatTable(){
     var total = row.price*row.qty*1.31*1.15;
     h += '<tr><td style="position:relative">';
     h += '<input type="text" value="'+esc(displayVal)+'"';
-    h += ' placeholder="พิมพ์รหัสหรือชื่อพัสดุ..."';
+    h += ' placeholder="พิมพ์รหัสหรือชื่อ..."';
     h += ' oninput="matSearch('+row.id+',this)"';
     h += ' onfocus="matSearch('+row.id+',this)"';
     h += ' style="font-size:12px">';
     h += '<div id="matDD_'+row.id+'"';
-    h += ' style="position:absolute;z-index:50;';
+    h += ' style="position:absolute;left:0;top:100%;';
+    h += 'min-width:350px;z-index:9999;';
     h += 'background:#fff;border:1px solid #c084e8;';
-    h += 'border-radius:6px;';
-    h += 'box-shadow:0 4px 12px rgba(0,0,0,.1);';
-    h += 'max-height:160px;overflow-y:auto;';
-    h += 'width:100%;display:none;left:0;';
-    h += 'top:calc(100% - 2px)"></div>';
+    h += 'border-radius:8px;';
+    h += 'box-shadow:0 4px 20px rgba(0,0,0,.15);';
+    h += 'max-height:50vh;overflow-y:auto;';
+    h += 'display:none;padding:4px 0"></div>';
     h += '</td>';
     h += '<td><input type="text" value="'+esc(row.desc);
     h += '" readonly style="font-size:13px"></td>';
@@ -1724,9 +1730,11 @@ function renderMatTable(){
     h += ' value="'+row.qty+'"';
     h += ' style="width:65px;font-size:13px"';
     h += ' onchange="matQtyChange('+row.id+',this)"></td>';
-    h += '<td><input type="text" value="'+fmt(row.price);
+    h += '<td class="hide-mobile"><input type="text"';
+    h += ' value="'+fmt(row.price);
     h += '" readonly style="font-size:13px"></td>';
-    h += '<td style="font-weight:600;color:#4a1660">';
+    h += '<td class="hide-mobile"';
+    h += ' style="font-weight:600;color:#4a1660">';
     h += fmt(total)+'</td>';
     h += '<td><button class="btn btn-danger btn-sm"';
     h += ' onclick="removeMat('+row.id+')">X</button>';
@@ -1752,6 +1760,9 @@ function matSearch(rowId,inp){
         || (m.desc||'').toLowerCase().includes(val);
     });
   }
+  filtered.sort(function(a,b){
+    return (a.code||'').localeCompare(b.code||'');
+  });
   if(!filtered.length){
     dd.innerHTML = '<div style="padding:8px;';
     dd.innerHTML += 'color:#9ca3af;font-size:12px">';
@@ -1760,7 +1771,18 @@ function matSearch(rowId,inp){
     return;
   }
   dd.innerHTML = '';
-  filtered.slice(0,10).forEach(function(m){
+  var hdr = document.createElement('div');
+  hdr.style.cssText =
+    'padding:8px 12px;font-weight:700;color:#4a1660;' +
+    'font-size:14px;border-bottom:1px solid #e2e8f0;' +
+    'display:flex;justify-content:space-between;' +
+    'align-items:center';
+  hdr.innerHTML =
+    'เลือกพัสดุ (' + filtered.length + ' รายการ)' +
+    '<span style="cursor:pointer;color:#9ca3af;' +
+    'font-size:20px" onclick="closeMatDD()">x</span>';
+  dd.appendChild(hdr);
+  filtered.slice(0,20).forEach(function(m){
     var item = document.createElement('div');
     item.style.cssText =
       'padding:6px 10px;cursor:pointer;' +
@@ -1774,7 +1796,7 @@ function matSearch(rowId,inp){
     item.onmousedown = function(e){
       e.preventDefault();
       matSelectItem(rowId,m);
-      dd.style.display = 'none';
+      closeMatDD();
     };
     item.onmouseover = function(){
       this.style.background = '#f5eefa';
@@ -1974,6 +1996,117 @@ function resetPhotoSlots(){
   });
 }
 
+
+// -- SIGNATURE PAD (Fullscreen Modal) --
+var sigCanvas = null;
+var sigCtx = null;
+var sigDrawing = false;
+var sigData = null;
+
+function initSignature(){
+  // ไม่ต้อง init ตอนนี้
+  // จะ init เมื่อเปิด modal
+  updateSigPreview();
+}
+function openSignatureModal(){
+  var modal = document.getElementById('sigModal');
+  if(!modal) return;
+  modal.style.display = 'flex';
+  // init canvas ใน modal
+  sigCanvas = document.getElementById('sigModalCanvas');
+  var container = sigCanvas.parentElement;
+  sigCanvas.width = container.offsetWidth;
+  sigCanvas.height = container.offsetHeight;
+  sigCtx = sigCanvas.getContext('2d');
+  sigCtx.strokeStyle = '#1a202c';
+  sigCtx.lineWidth = 3;
+  sigCtx.lineCap = 'round';
+  sigCtx.lineJoin = 'round';
+  // วาดลายเซ็นเดิม (ถ้ามี)
+  if(sigData){
+    var img = new Image();
+    img.onload = function(){
+      sigCtx.drawImage(img,0,0,
+        sigCanvas.width,sigCanvas.height);
+    };
+    img.src = sigData;
+  }
+  // Mouse
+  sigCanvas.onmousedown = function(e){
+    sigDrawing = true;
+    sigCtx.beginPath();
+    sigCtx.moveTo(e.offsetX,e.offsetY);
+  };
+  sigCanvas.onmousemove = function(e){
+    if(!sigDrawing) return;
+    sigCtx.lineTo(e.offsetX,e.offsetY);
+    sigCtx.stroke();
+  };
+  sigCanvas.onmouseup = function(){sigDrawing=false;};
+  sigCanvas.onmouseleave = function(){sigDrawing=false;};
+  // Touch
+  sigCanvas.ontouchstart = function(e){
+    e.preventDefault();
+    sigDrawing = true;
+    var rect = sigCanvas.getBoundingClientRect();
+    var t = e.touches[0];
+    sigCtx.beginPath();
+    sigCtx.moveTo(
+      t.clientX-rect.left,
+      t.clientY-rect.top
+    );
+  };
+  sigCanvas.ontouchmove = function(e){
+    e.preventDefault();
+    if(!sigDrawing) return;
+    var rect = sigCanvas.getBoundingClientRect();
+    var t = e.touches[0];
+    sigCtx.lineTo(
+      t.clientX-rect.left,
+      t.clientY-rect.top
+    );
+    sigCtx.stroke();
+  };
+  sigCanvas.ontouchend = function(){sigDrawing=false;};
+}
+function clearSigModal(){
+  if(sigCanvas && sigCtx){
+    sigCtx.clearRect(
+      0,0,sigCanvas.width,sigCanvas.height
+    );
+  }
+}
+function saveSigModal(){
+  if(sigCanvas){
+    sigData = sigCanvas.toDataURL('image/png',0.5);
+  }
+  document.getElementById('sigModal').style.display = 'none';
+  updateSigPreview();
+}
+function cancelSigModal(){
+  document.getElementById('sigModal').style.display = 'none';
+}
+function updateSigPreview(){
+  var preview = document.getElementById('sigPreview');
+  if(!preview) return;
+  if(sigData){
+    preview.innerHTML =
+      '<img src="'+sigData+'" style="max-height:60px;' +
+      'border:1px solid #e2e8f0;border-radius:6px">' +
+      '<button class="btn btn-outline btn-sm" ' +
+      'onclick="clearSignature()" ' +
+      'style="margin-left:8px;font-size:11px">ล้าง</button>';
+  } else {
+    preview.innerHTML =
+      '<span style="color:#9ca3af;font-size:13px">' +
+      'ยังไม่ได้เซ็นชื่อ</span>';
+  }
+}
+function clearSignature(){
+  sigData = null;
+  updateSigPreview();
+}
+
 // -- NAV --
 function switchTab(t){
   ['BR1','History','Admin'].forEach(function(x){
@@ -2011,6 +2144,79 @@ function switchAdminTab(t){
   if(t==='branches') renderBranches();
   if(t==='customers') renderCustomers();
   if(t==='materials') renderMaterials();
+}
+
+
+// -- ADMIN DELETE ALL --
+function deleteAllRecords(){
+  if(!confirm('ต้องการลบประวัติ บร.1 ทั้งหมด?')) return;
+  if(!confirm('ยืนยันอีกครั้ง - ข้อมูลจะหายถาวร!')) return;
+  showLoading('กำลังลบทั้งหมด...');
+  db.collection('records').get()
+    .then(function(snap){
+      var batch = db.batch();
+      snap.forEach(function(doc){batch.delete(doc.ref);});
+      return batch.commit();
+    })
+    .then(function(){hideLoading();renderHistory();renderUsers();
+      alert('ลบประวัติทั้งหมดแล้ว');})
+    .catch(function(){hideLoading();alert('เกิดข้อผิดพลาด');});
+}
+function deleteAllBranches(){
+  if(!confirm('ต้องการลบ กฟฟ./สาขา ทั้งหมด?')) return;
+  showLoading('กำลังลบทั้งหมด...');
+  db.collection('branches').get()
+    .then(function(snap){
+      var batch = db.batch();
+      snap.forEach(function(doc){batch.delete(doc.ref);});
+      return batch.commit();
+    })
+    .then(function(){
+      hideLoading();cache.branches=[];renderBranches();
+      alert('ลบสาขาทั้งหมดแล้ว');})
+    .catch(function(){hideLoading();alert('เกิดข้อผิดพลาด');});
+}
+function deleteAllCustomers(){
+  if(!confirm('ต้องการลบผู้ใช้ไฟฟ้าทั้งหมด?')) return;
+  showLoading('กำลังลบทั้งหมด...');
+  db.collection('customers').get()
+    .then(function(snap){
+      var batch = db.batch();
+      snap.forEach(function(doc){batch.delete(doc.ref);});
+      return batch.commit();
+    })
+    .then(function(){
+      hideLoading();cache.customers=[];renderCustomers();
+      alert('ลบผู้ใช้ไฟฟ้าทั้งหมดแล้ว');})
+    .catch(function(){hideLoading();alert('เกิดข้อผิดพลาด');});
+}
+function deleteAllMaterials(){
+  if(!confirm('ต้องการลบพัสดุทั้งหมด?')) return;
+  showLoading('กำลังลบทั้งหมด...');
+  db.collection('materials').get()
+    .then(function(snap){
+      var batch = db.batch();
+      snap.forEach(function(doc){batch.delete(doc.ref);});
+      return batch.commit();
+    })
+    .then(function(){
+      hideLoading();cache.materials=[];
+      renderMaterials();renderMatTable();
+      alert('ลบพัสดุทั้งหมดแล้ว');})
+    .catch(function(){hideLoading();alert('เกิดข้อผิดพลาด');});
+}
+function deleteAllUsers(){
+  if(!confirm('ต้องการลบผู้ใช้งานทั้งหมด? (ยกเว้น admin)')) return;
+  showLoading('กำลังลบทั้งหมด...');
+  db.collection('users').get()
+    .then(function(snap){
+      var batch = db.batch();
+      snap.forEach(function(doc){batch.delete(doc.ref);});
+      return batch.commit();
+    })
+    .then(function(){hideLoading();renderUsers();
+      alert('ลบผู้ใช้งานทั้งหมดแล้ว');})
+    .catch(function(){hideLoading();alert('เกิดข้อผิดพลาด');});
 }
 
 // -- UTILS --
