@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ระบบค่าบริการงานแก้กระแสไฟฟ้าขัดข้อง (บร.1)</title>
+<title>บร.1 - ค่าบริการงานแก้กระแสไฟฟ้าขัดข้อง</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Sarabun',sans-serif;background:#f0f4f8;color:#1a202c;font-size:15px}
@@ -215,7 +215,7 @@ tr:hover td{background:#f8fafc}
 <input type="text" id="eu_branch" placeholder="พิมพ์เพื่อค้นหาสาขา..." oninput="filterEuBranch()" autocomplete="off">
 <div id="euBranchDropdown" style="position:absolute;z-index:50;background:#fff;border:1px solid #c084e8;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,.1);max-height:180px;overflow-y:auto;width:100%;display:none;top:calc(100% - 2px)"></div>
 </div>
-<div class="form-group"><label>บทบาท</label><select id="eu_role"><option value="user">user</option><option value="admin">admin</option></select></div>
+<div class="form-group"><label>บทบาท</label><select id="eu_role"><option value="user">user</option><option value="staff">staff</option><option value="admin">admin</option></select></div>
 </div>
 <div class="grid-2">
 <div class="form-group"><label>สถานะ</label><select id="eu_status"><option value="approved">อนุมัติแล้ว</option><option value="pending">รออนุมัติ</option><option value="rejected">ปฏิเสธ</option></select></div>
@@ -236,6 +236,17 @@ tr:hover td{background:#f8fafc}
 </div></div>
 
 
+
+<!-- PHOTO CHOICE MODAL -->
+<div id="photoChoiceModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;padding:16px">
+<div style="background:#fff;border-radius:14px;padding:24px;width:100%;max-width:320px;text-align:center">
+<div style="font-weight:700;color:#4a1660;font-size:17px;margin-bottom:18px"><i class="fa fa-image"></i> เลือกวิธี</div>
+<button class="btn btn-primary" onclick="chooseCamera()" style="width:100%;justify-content:center;padding:14px;font-size:15px;margin-bottom:10px"><i class="fa fa-camera"></i> ถ่ายรูป</button>
+<button class="btn btn-outline" onclick="chooseGallery()" style="width:100%;justify-content:center;padding:14px;font-size:15px;margin-bottom:10px"><i class="fa fa-folder-open"></i> เลือกจากแกลลอรี่</button>
+<button class="btn btn-outline" onclick="closePhotoChoice()" style="width:100%;justify-content:center;padding:10px;font-size:13px;color:#9ca3af">ยกเลิก</button>
+</div>
+</div>
+
 <!-- SIGNATURE MODAL -->
 <div id="sigModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.8);flex-direction:column;align-items:center;justify-content:center;padding:16px">
 <div style="background:#fff;border-radius:12px;width:100%;max-width:600px;height:70vh;display:flex;flex-direction:column;overflow:hidden">
@@ -253,6 +264,35 @@ tr:hover td{background:#f8fafc}
 </div>
 </div>
 </div>
+
+
+<!-- EDIT PHOTOS MODAL -->
+<div class="modal-bg" id="editPhotosModal" style="display:none">
+<div class="modal" style="max-width:600px">
+<div class="modal-title"><i class="fa fa-images"></i> แก้ไขรูปถ่าย <span style="cursor:pointer;color:#9ca3af;font-size:20px" onclick="closeEditPhotos()">x</span></div>
+<div id="editPhotosContent"></div>
+<div style="display:flex;gap:10px;justify-content:flex-end;margin-top:14px">
+<button class="btn btn-outline" onclick="closeEditPhotos()">ยกเลิก</button>
+<button class="btn btn-success" onclick="saveEditPhotos()"><i class="fa fa-floppy-disk"></i> บันทึกรูป</button>
+</div>
+</div></div>
+
+<!-- MT FORM MODAL -->
+<div class="modal-bg" id="mtFormModal" style="display:none">
+<div class="modal" style="max-width:540px">
+<div class="modal-title"><i class="fa fa-file-invoice"></i> สร้างใบ มท. <span style="cursor:pointer;color:#9ca3af;font-size:20px" onclick="closeMtForm()">x</span></div>
+<div id="mtFormAlert"></div>
+<div class="form-group"><label>ชื่อผู้รับบริการ</label><input type="text" id="mt_name" placeholder="ชื่อ-นามสกุล"></div>
+<div class="form-group"><label>ที่อยู่</label><input type="text" id="mt_address" placeholder="ที่อยู่"></div>
+<div class="form-group"><label>บัญชีแสดงสัญญาเลขที่</label><input type="text" id="mt_contract" placeholder="เลขที่บัญชีแสดงสัญญา"></div>
+<div class="form-group"><label>ผู้อนุมัติ</label><select id="mt_approver"><option value="">-- เลือกผู้อนุมัติ --</option></select></div>
+<input type="hidden" id="mt_recId">
+<div style="display:flex;gap:10px;justify-content:flex-end;margin-top:10px">
+<button class="btn btn-outline" onclick="closeMtForm()">ยกเลิก</button>
+<button class="btn btn-success" onclick="confirmMtForm()"><i class="fa fa-check"></i> ยืนยันสร้าง มท.</button>
+</div>
+</div></div>
+
 <!-- LOGIN -->
 <div id="loginPage" class="page active">
 <div class="auth-wrap">
@@ -306,11 +346,12 @@ tr:hover td{background:#f8fafc}
 <!-- MAIN APP -->
 <div id="mainApp" class="page">
 <nav class="navbar">
-<div class="navbar-brand"><img src="images/PEA-Logo.jpg" alt="PEA" onerror="this.style.display='none'" style="height:36px"> ระบบค่าบริการงานแก้กระแสไฟฟ้าขัดข้อง (บร.1)</div>
+<div class="navbar-brand"><img src="images/PEA-Logo.png" alt="PEA" onerror="this.style.display='none'" style="height:36px"> บร.1 - ค่าบริการงานแก้กระแสไฟฟ้าขัดข้อง</div>
 <div class="navbar-nav">
 <span class="db-status"><span class="db-dot" id="dbDot"></span><span id="dbStatusText">DB</span></span>
 <div class="nav-link active" id="navBR1" onclick="switchTab('br1')" style="font-size:15px;font-weight:700;padding:6px 16px;background:rgba(255,255,255,.2);border-radius:8px"><i class="fa fa-file-invoice"></i> บร.1</div>
 <div class="nav-link" id="navHistory" onclick="switchTab('history')"><i class="fa fa-clock-rotate-left"></i> ประวัติ</div>
+<div class="nav-link" id="navOrder" onclick="switchTab('order')" style="display:none"><i class="fa fa-file-lines"></i> ใบสั่ง</div>
 <div class="nav-link" id="navAdmin" onclick="switchTab('admin')" style="display:none"><i class="fa fa-gear"></i> Admin</div>
 <div class="nav-link" id="navUser" onclick="openProfile()" style="cursor:pointer"></div>
 <div class="nav-link" onclick="doLogout()" style="color:#fca5a5"><i class="fa fa-right-from-bracket"></i> ออก</div>
@@ -332,7 +373,7 @@ tr:hover td{background:#f8fafc}
 <div class="form-group"><label>ที่อยู่</label><input type="text" id="f_address" placeholder="บ้านเลขที่ ถนน ตำบล อำเภอ จังหวัด"></div>
 </div>
 <div class="grid-2">
-<div class="form-group"><label>พิกัด Lat/Long (อัตโนมัติ)</label><div style="display:flex;gap:8px"><input type="text" id="f_coords" placeholder="กำลังระบุพิกัด..." readonly style="flex:1"><button class="btn btn-outline btn-sm" onclick="getLocation()"><i class="fa fa-location-dot"></i> GPS</button></div></div>
+<div class="form-group"><label>พิกัด Lat/Long (อัตโนมัติ)</label><div style="display:flex;gap:8px"><input type="text" id="f_coords" placeholder="กำลังระบุพิกัด..." style="flex:1"><button class="btn btn-outline btn-sm" onclick="getLocation()"><i class="fa fa-location-dot"></i> GPS</button></div></div>
 <div class="form-group"><label>วันเวลาปัจจุบัน</label><div style="display:flex;gap:6px"><input type="text" id="f_datetime_display" placeholder="วันเวลา" style="flex:1" oninput="syncDatetimeFromDisplay()"><button class="btn btn-outline btn-sm" onclick="setNow()"><i class="fa fa-clock"></i> ตอนนี้</button></div><input type="hidden" id="f_datetime"></div>
 </div>
 </div>
@@ -370,19 +411,19 @@ tr:hover td{background:#f8fafc}
 <div class="section-title"><i class="fa fa-camera"></i> ภาพถ่ายประกอบการปฏิบัติงาน</div>
 <div style="margin-bottom:18px">
 <div style="font-weight:600;color:#4a1660;margin-bottom:8px"><span style="background:#e9d5f7;color:#4a1660;padding:2px 9px;border-radius:20px;font-size:11px">1 รูป</span> PEA. มิเตอร์</div>
-<div class="pg1"><div class="photo-slot" id="slot_meter_0" onclick="triggerPhoto('meter',0)"><div class="ph"><div class="phl">PEA. มิเตอร์</div><div class="phs">คลิกหรือถ่ายรูป</div></div><input type="file" accept="image/*" capture="environment" onchange="handlePhoto('meter',0,this)" onclick="event.stopPropagation()"><button class="prm" onclick="removePhoto('meter',0,event)">x</button></div></div>
+<div class="pg1"><div class="photo-slot" id="slot_meter_0" onclick="triggerPhoto('meter',0)"><div class="ph"><div class="phl">PEA. มิเตอร์</div><div class="phs">คลิกหรือถ่ายรูป</div></div><input type="file" accept="image/*" style="display:none" onchange="handlePhoto('meter',0,this)" onclick="event.stopPropagation()"><button class="prm" onclick="removePhoto('meter',0,event)">x</button></div></div>
 </div>
 <div style="margin-bottom:18px">
 <div style="font-weight:600;color:#4a1660;margin-bottom:8px"><span style="background:#d1fae5;color:#065f46;padding:2px 9px;border-radius:20px;font-size:11px">2 รูป</span> ภาพถ่ายการปฏิบัติงาน</div>
 <div class="pg2">
-<div class="photo-slot" id="slot_work_0" onclick="triggerPhoto('work',0)"><div class="ph"><div class="phl">ปฏิบัติงาน 1</div><div class="phs">คลิกหรือถ่ายรูป</div></div><input type="file" accept="image/*" capture="environment" onchange="handlePhoto('work',0,this)" onclick="event.stopPropagation()"><button class="prm" onclick="removePhoto('work',0,event)">x</button></div>
-<div class="photo-slot" id="slot_work_1" onclick="triggerPhoto('work',1)"><div class="ph"><div class="phl">ปฏิบัติงาน 2</div><div class="phs">คลิกหรือถ่ายรูป</div></div><input type="file" accept="image/*" capture="environment" onchange="handlePhoto('work',1,this)" onclick="event.stopPropagation()"><button class="prm" onclick="removePhoto('work',1,event)">x</button></div>
+<div class="photo-slot" id="slot_work_0" onclick="triggerPhoto('work',0)"><div class="ph"><div class="phl">ปฏิบัติงาน 1</div><div class="phs">คลิกหรือถ่ายรูป</div></div><input type="file" accept="image/*" style="display:none" onchange="handlePhoto('work',0,this)" onclick="event.stopPropagation()"><button class="prm" onclick="removePhoto('work',0,event)">x</button></div>
+<div class="photo-slot" id="slot_work_1" onclick="triggerPhoto('work',1)"><div class="ph"><div class="phl">ปฏิบัติงาน 2</div><div class="phs">คลิกหรือถ่ายรูป</div></div><input type="file" accept="image/*" style="display:none" onchange="handlePhoto('work',1,this)" onclick="event.stopPropagation()"><button class="prm" onclick="removePhoto('work',1,event)">x</button></div>
 </div></div>
 <div>
 <div style="font-weight:600;color:#4a1660;margin-bottom:8px"><span style="background:#fef9c3;color:#854d0e;padding:2px 9px;border-radius:20px;font-size:11px">2 รูป</span> ภาพถ่ายอุปกรณ์ที่ใช้แก้ไข</div>
 <div class="pg2">
-<div class="photo-slot" id="slot_equip_0" onclick="triggerPhoto('equip',0)"><div class="ph"><div class="phl">อุปกรณ์ 1</div><div class="phs">คลิกหรือถ่ายรูป</div></div><input type="file" accept="image/*" capture="environment" onchange="handlePhoto('equip',0,this)" onclick="event.stopPropagation()"><button class="prm" onclick="removePhoto('equip',0,event)">x</button></div>
-<div class="photo-slot" id="slot_equip_1" onclick="triggerPhoto('equip',1)"><div class="ph"><div class="phl">อุปกรณ์ 2</div><div class="phs">คลิกหรือถ่ายรูป</div></div><input type="file" accept="image/*" capture="environment" onchange="handlePhoto('equip',1,this)" onclick="event.stopPropagation()"><button class="prm" onclick="removePhoto('equip',1,event)">x</button></div>
+<div class="photo-slot" id="slot_equip_0" onclick="triggerPhoto('equip',0)"><div class="ph"><div class="phl">อุปกรณ์ 1</div><div class="phs">คลิกหรือถ่ายรูป</div></div><input type="file" accept="image/*" style="display:none" onchange="handlePhoto('equip',0,this)" onclick="event.stopPropagation()"><button class="prm" onclick="removePhoto('equip',0,event)">x</button></div>
+<div class="photo-slot" id="slot_equip_1" onclick="triggerPhoto('equip',1)"><div class="ph"><div class="phl">อุปกรณ์ 2</div><div class="phs">คลิกหรือถ่ายรูป</div></div><input type="file" accept="image/*" style="display:none" onchange="handlePhoto('equip',1,this)" onclick="event.stopPropagation()"><button class="prm" onclick="removePhoto('equip',1,event)">x</button></div>
 </div></div>
 </div>
 <div class="card" style="margin-bottom:18px">
@@ -422,6 +463,60 @@ tr:hover td{background:#f8fafc}
 <div style="margin-top:12px;text-align:right" id="histDeleteAll"></div>
 </div></div>
 
+
+<!-- ORDER TAB -->
+<div id="tabOrder" class="tab-content">
+<div class="card" style="margin-bottom:18px">
+<div class="section-title"><i class="fa fa-file-lines"></i> ใบสั่ง</div>
+<div class="tabs" id="orderTabs">
+<div class="tab active" onclick="switchOrderTab('orderList')"><i class="fa fa-list"></i> ใบสั่ง</div>
+<div class="tab" onclick="switchOrderTab('mtList')"><i class="fa fa-file-invoice"></i> มท.</div>
+<div class="tab" onclick="switchOrderTab('mtSettings')"><i class="fa fa-gear"></i> ตั้งค่า มท.</div>
+</div>
+
+<!-- ใบสั่ง list -->
+<div id="otOrderList" class="tab-content active">
+<div id="orderListContent"></div>
+</div>
+
+<!-- มท. list -->
+<div id="otMtList" class="tab-content">
+<div id="mtListContent"></div>
+</div>
+
+<!-- ตั้งค่า มท. -->
+<div id="otMtSettings" class="tab-content">
+<div style="background:#e9d5f7;color:#4a1660;padding:10px 16px;border-radius:8px;margin-bottom:14px;font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px"><i class="fa fa-building"></i> สาขา: <span id="mtBranchLabel"></span></div>
+<div class="section-title"><i class="fa fa-gear"></i> ตั้งค่า มท.</div>
+<div class="grid-2">
+<div class="form-group"><label>เลขที่ มท.</label><input type="text" id="set_mtNumber" placeholder="เช่น มท.กฟส.มจ.001/2569"></div>
+<div class="form-group"><label>กฟฟ.สาขา</label><input type="text" id="set_mtBranch" placeholder="เช่น การไฟฟ้าส่วนภูมิภาคสาขาอำเภอมัญจาคีรี"></div>
+</div>
+<div class="section-title" style="font-size:14px;margin-top:12px"><i class="fa fa-location-dot"></i> ที่อยู่</div>
+<div class="grid-2">
+<div class="form-group"><label>เลขที่</label><input type="text" id="set_mtAddr" placeholder="เลขที่"></div>
+<div class="form-group"><label>ถนน</label><input type="text" id="set_mtRoad" placeholder="ถนน"></div>
+</div>
+<div class="grid-3">
+<div class="form-group" style="position:relative"><label>จังหวัด</label><input type="text" id="set_mtProvince" placeholder="พิมพ์ค้นหาจังหวัด..." oninput="filterMtProvince()" onfocus="filterMtProvince()" autocomplete="off"><div id="mtProvinceDD" style="position:absolute;z-index:50;background:#fff;border:1px solid #c084e8;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,.1);max-height:200px;overflow-y:auto;width:100%;display:none;top:calc(100% - 2px)"></div></div>
+<div class="form-group"><label>อำเภอ</label><input type="text" id="set_mtAmphoe" placeholder="อำเภอ"></div>
+<div class="form-group"><label>ตำบล</label><input type="text" id="set_mtTambon" placeholder="ตำบล"></div>
+</div>
+<div class="form-group" style="max-width:200px"><label>เลขไปรษณีย์</label><input type="text" id="set_mtZipcode" placeholder="เช่น 40160"></div>
+<div class="section-title" style="font-size:14px;margin-top:12px"><i class="fa fa-user-tie"></i> ผู้อนุมัติ (สูงสุด 5 คน)</div>
+<div class="grid-2" style="margin-bottom:8px"><div class="form-group"><label>ผู้อนุมัติ 1 - ชื่อ</label><input type="text" id="set_apName1" placeholder="ชื่อ-นามสกุล"></div><div class="form-group"><label>ตำแหน่ง</label><input type="text" id="set_apPos1" placeholder="ตำแหน่ง"></div></div>
+<div class="grid-2" style="margin-bottom:8px"><div class="form-group"><label>ผู้อนุมัติ 2 - ชื่อ</label><input type="text" id="set_apName2" placeholder="ชื่อ-นามสกุล"></div><div class="form-group"><label>ตำแหน่ง</label><input type="text" id="set_apPos2" placeholder="ตำแหน่ง"></div></div>
+<div class="grid-2" style="margin-bottom:8px"><div class="form-group"><label>ผู้อนุมัติ 3 - ชื่อ</label><input type="text" id="set_apName3" placeholder="ชื่อ-นามสกุล"></div><div class="form-group"><label>ตำแหน่ง</label><input type="text" id="set_apPos3" placeholder="ตำแหน่ง"></div></div>
+<div class="grid-2" style="margin-bottom:8px"><div class="form-group"><label>ผู้อนุมัติ 4 - ชื่อ</label><input type="text" id="set_apName4" placeholder="ชื่อ-นามสกุล"></div><div class="form-group"><label>ตำแหน่ง</label><input type="text" id="set_apPos4" placeholder="ตำแหน่ง"></div></div>
+<div class="grid-2" style="margin-bottom:8px"><div class="form-group"><label>ผู้อนุมัติ 5 - ชื่อ</label><input type="text" id="set_apName5" placeholder="ชื่อ-นามสกุล"></div><div class="form-group"><label>ตำแหน่ง</label><input type="text" id="set_apPos5" placeholder="ตำแหน่ง"></div></div>
+
+
+<button class="btn btn-primary" onclick="saveMtSettings()" style="margin-top:10px"><i class="fa fa-floppy-disk"></i> บันทึกตั้งค่า มท.</button>
+<div id="mtSettingsAlert" style="margin-top:10px"></div>
+</div>
+
+</div></div>
+
 <!-- ADMIN -->
 <div id="tabAdmin" class="tab-content">
 <div class="tabs" id="adminTabs">
@@ -444,10 +539,10 @@ tr:hover td{background:#f8fafc}
 <input type="hidden" id="br_editId">
 </div>
 <div class="card" style="margin-bottom:14px">
-<div class="section-title"><i class="fa fa-file-import"></i> นำเข้า กฟฟ./สาขา จาก CSV</div>
+<div class="section-title"><i class="fa fa-file-import"></i> นำเข้า กฟฟ./สาขา จาก Excel/CSV</div>
 <div class="alert alert-info"><b>รูปแบบ:</b> ชื่อ, จังหวัด, เขต</div>
-<div class="drop-zone" onclick="document.getElementById('csvBrFile').click()" ondragover="event.preventDefault();this.classList.add('dragover')" ondragleave="this.classList.remove('dragover')" ondrop="handleBrCsvDrop(event)"><div style="font-weight:600">คลิกเพื่อเลือกไฟล์ .csv</div></div>
-<input type="file" id="csvBrFile" accept=".csv" style="display:none" onchange="handleBrCsvFile(this)">
+<div class="drop-zone" onclick="document.getElementById('csvBrFile').click()" ondragover="event.preventDefault();this.classList.add('dragover')" ondragleave="this.classList.remove('dragover')" ondrop="handleBrCsvDrop(event)"><div style="font-weight:600">คลิกเพื่อเลือกไฟล์ .xlsx หรือ .csv</div></div>
+<input type="file" id="csvBrFile" accept=".csv,.xlsx,.xls" style="display:none" onchange="handleBrCsvFile(this)">
 <div id="csvBrPreview" style="margin-top:12px"></div>
 </div>
 <div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><div class="section-title" style="margin-bottom:0;border-bottom:none;padding-bottom:0"><i class="fa fa-building"></i> รายการ กฟฟ./สาขาทั้งหมด</div><button class="btn btn-danger btn-sm" onclick="deleteAllBranches()"><i class="fa fa-trash"></i> ลบทั้งหมด</button></div><div style="margin-bottom:10px"><input type="text" id="brSearch" placeholder="ค้นหาชื่อสาขา..." placeholder="ค้นหาสาขา..." style="max-width:300px" oninput="renderBranches()"></div><div id="branchTable"></div></div>
@@ -467,10 +562,10 @@ tr:hover td{background:#f8fafc}
 <input type="hidden" id="c_editId">
 </div>
 <div class="card" style="margin-bottom:14px">
-<div class="section-title"><i class="fa fa-file-import"></i> นำเข้าผู้ใช้ไฟฟ้าจาก CSV</div>
+<div class="section-title"><i class="fa fa-file-import"></i> นำเข้าผู้ใช้ไฟฟ้าจาก Excel/CSV</div>
 <div class="alert alert-info"><b>รูปแบบ:</b> PEA, ชื่อ, ที่อยู่, สาขา</div>
-<div class="drop-zone" onclick="document.getElementById('csvCustFile').click()" ondragover="event.preventDefault();this.classList.add('dragover')" ondragleave="this.classList.remove('dragover')" ondrop="handleCustCsvDrop(event)"><div style="font-weight:600">คลิกเพื่อเลือกไฟล์ .csv</div></div>
-<input type="file" id="csvCustFile" accept=".csv" style="display:none" onchange="handleCustCsvFile(this)">
+<div class="drop-zone" onclick="document.getElementById('csvCustFile').click()" ondragover="event.preventDefault();this.classList.add('dragover')" ondragleave="this.classList.remove('dragover')" ondrop="handleCustCsvDrop(event)"><div style="font-weight:600">คลิกเพื่อเลือกไฟล์ .xlsx หรือ .csv</div></div>
+<input type="file" id="csvCustFile" accept=".csv,.xlsx,.xls" style="display:none" onchange="handleCustCsvFile(this)">
 <div id="csvCustPreview" style="margin-top:12px"></div>
 </div>
 <div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><div class="section-title" style="margin-bottom:0;border-bottom:none;padding-bottom:0"><i class="fa fa-house-user"></i> รายการผู้ใช้ไฟฟ้าทั้งหมด</div><button class="btn btn-danger btn-sm" onclick="deleteAllCustomers()"><i class="fa fa-trash"></i> ลบทั้งหมด</button></div><div style="margin-bottom:10px"><input type="text" id="custSearch" placeholder="ค้นหา PEA หรือชื่อ..." placeholder="ค้นหา PEA หรือชื่อ..." style="max-width:300px" oninput="renderCustomers()"></div><div id="customerTable"></div></div>
@@ -486,6 +581,21 @@ tr:hover td{background:#f8fafc}
 </div>
 <button class="btn btn-primary" onclick="saveSettings()"><i class="fa fa-floppy-disk"></i> บันทึกตั้งค่า</button>
 <div id="settingsAlert" style="margin-top:10px"></div>
+<div class="section-title" style="font-size:14px;margin-top:16px"><i class="fa fa-file-word"></i> ไฟล์ต้นแบบ มท. (.docx)</div>
+<div id="currentTemplateInfo" style="margin-bottom:8px;font-size:13px;color:#6b7280"></div>
+<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+<label class="btn btn-outline" style="cursor:pointer">
+<i class="fa fa-upload"></i> อัปโหลด template ใหม่
+<input type="file" accept=".docx" style="display:none" onchange="uploadMtTemplate(this)">
+</label>
+<button class="btn btn-outline btn-sm" onclick="resetMtTemplate()"><i class="fa fa-rotate-left"></i> ใช้ template เริ่มต้น</button>
+<button class="btn btn-outline btn-sm" onclick="downloadCurrentTemplate()"><i class="fa fa-download"></i> ดาวน์โหลด template ปัจจุบัน</button>
+</div>
+<div class="alert alert-info" style="margin-top:10px;font-size:12px">
+<b>วิธีแก้ไข:</b> ดาวน์โหลด template ปัจจุบัน → เปิดใน Word → แก้ไขตามต้องการ → ห้ามลบ {tag} → บันทึก → อัปโหลดกลับ
+<br><b>Tags:</b> {mt_number} {mt_branch} {mt_addr} {mt_road} {mt_tambon} {mt_amphoe} {mt_province} {mt_zipcode} {date1} {name1} {address1} {contract} {provider} {work_date} {price1} {price2} {price3} {price4} {total} {total_text} {approver_name} {approver_pos}
+</div>
+
 </div>
 </div>
 <div id="atMaterials" class="tab-content">
@@ -505,10 +615,10 @@ tr:hover td{background:#f8fafc}
 <input type="hidden" id="m_editId">
 </div>
 <div class="card" style="margin-bottom:14px">
-<div class="section-title"><i class="fa fa-file-import"></i> นำเข้าพัสดุจาก CSV</div>
+<div class="section-title"><i class="fa fa-file-import"></i> นำเข้าพัสดุจาก Excel/CSV</div>
 <div class="alert alert-info"><b>รูปแบบ:</b> รหัส, รายละเอียด, หน่วยนับ, ราคา, ประเภท, ใช้งาน</div>
-<div class="drop-zone" onclick="document.getElementById('csvFile').click()" ondragover="event.preventDefault();this.classList.add('dragover')" ondragleave="this.classList.remove('dragover')" ondrop="handleCsvDrop(event)"><div style="font-weight:600">คลิกเพื่อเลือกไฟล์ .csv</div></div>
-<input type="file" id="csvFile" accept=".csv" style="display:none" onchange="handleCsvFile(this)">
+<div class="drop-zone" onclick="document.getElementById('csvFile').click()" ondragover="event.preventDefault();this.classList.add('dragover')" ondragleave="this.classList.remove('dragover')" ondrop="handleCsvDrop(event)"><div style="font-weight:600">คลิกเพื่อเลือกไฟล์ .xlsx หรือ .csv</div></div>
+<input type="file" id="csvFile" accept=".csv,.xlsx,.xls" style="display:none" onchange="handleCsvFile(this)">
 <div id="csvPreview" style="margin-top:12px"></div>
 </div>
 <div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><div class="section-title" style="margin-bottom:0;border-bottom:none;padding-bottom:0"><i class="fa fa-box"></i> รายการพัสดุทั้งหมด</div><button class="btn btn-danger btn-sm" onclick="deleteAllMaterials()"><i class="fa fa-trash"></i> ลบทั้งหมด</button></div>
@@ -530,6 +640,7 @@ Dev : ส.อ.ภูวณัตย์ ศรีจันทร์ | พชง.6
 <!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script src="lib.js"></script>
 <script src="br1.js"></script>
 </div><!-- /app -->
 </body>
