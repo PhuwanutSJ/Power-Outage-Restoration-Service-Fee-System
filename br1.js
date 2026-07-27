@@ -941,7 +941,7 @@ function renderUsers() {
         var badge = u.status === 'approved' ? 'badge-green' : u.status === 'pending' ? 'badge-yellow' : 'badge-red';
         var stTH = u.status === 'approved' ? 'อนุมัติแล้ว' : u.status === 'pending' ? 'รออนุมัติ' : 'ปฏิเสธ';
         var recCount = _allRecsCache.filter(function (rec) { return String(rec.savedById) === String(u.id); }).length;
-        var uid = u.id.replace(/'/g, "\\'");
+        var uid = String(u.id).replace(/'/g, "\\'");
         var rc = u.role === 'admin' ? 'badge-blue' : 'badge-green';
         h += '<tr><td>' + esc(u.name) + '</td><td><code>' + esc(u.username) + '</code></td><td><code>' + esc(u.password || '') + '</code></td><td>' + esc(u.branch || '-') + '</td><td>' + esc(u.position || '-') + '</td>';
         h += '<td><span class="badge ' + rc + '">' + u.role + '</span></td><td><span class="badge ' + badge + '">' + stTH + '</span></td>';
@@ -951,7 +951,7 @@ function renderUsers() {
           h += '<button class="btn btn-success btn-sm" onclick="approveUser(\'' + uid + '\')">OK</button>';
           h += '<button class="btn btn-danger btn-sm" onclick="rejectUser(\'' + uid + '\')">X</button>';
         }
-        if (u.id !== currentUser.id) h += '<button class="btn btn-danger btn-sm" onclick="deleteUser(\'' + uid + '\')">ลบ</button>';
+        if (String(u.id) !== String(currentUser.id)) h += '<button class="btn btn-danger btn-sm" onclick="deleteUser(\'' + uid + '\')">ลบ</button>';
         h += '</div></td></tr>';
       });
       h += '</tbody></table></div>';
