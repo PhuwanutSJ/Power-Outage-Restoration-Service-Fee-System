@@ -1,7 +1,7 @@
 // ==============================================
 // CONFIG — แก้เฉพาะ 2 บรรทัดนี้
 // ==============================================
-var GAS_URL = 'https://script.google.com/macros/s/AKfycbwnLS4e70Ikm_eF79qYj6SCi9C7F6AZ_iVsfSHgaJhhvNvLFVAQpAsR3uXw_4Aw0_-D/exec';
+var GAS_URL = 'https://script.google.com/macros/s/AKfycbzQpHPEwl0II5R1MXW3g4-tyiKu6y7DTq43HSDe3af4e-UTkJOkBtStBhB7HVK7Y1b6/exec';
 var PHOTO_GAS_URL = 'https://script.google.com/macros/s/AKfycbw88dEHyeK631w9SIh2QVrwaUUabErKkrRTJtOPVYLl8WZ66DGAjRUAZ-geZ5pXbuNFOw/exec';
 
 // ADMIN hardcode
