@@ -1723,11 +1723,11 @@ function extractDate(dt) {
   return dt;
 }
 function esc(s) {
-  return (s || '')
+  return (String(s === null || s === undefined ? '' : s))
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;'); 
+    .replace(/"/g, '&quot;');
 }
 function driveImg(url) {
   if (!url) return '';
