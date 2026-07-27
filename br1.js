@@ -489,7 +489,7 @@ function importBrRows(rows) {
 
 function onPeaInput() {
   var peaVal = gv('f_pea');
-  var found = cache.customers.find(function (c) { return c.pea === peaVal; });
+  var found = cache.customers.find(function (c) { return String(c.pea) === String(peaVal); });
   var label = document.getElementById('peaMatchLabel');
   var custInp = document.getElementById('f_customer');
   var addrInp = document.getElementById('f_address');
@@ -542,7 +542,7 @@ function clearCustomerForm() {
 }
 function renderCustomers() {
   var kw = gv('custSearch').toLowerCase();
-  var shown = kw ? cache.customers.filter(function (c) { return (c.pea || '').includes(kw) || (c.name || '').toLowerCase().includes(kw); }) : cache.customers;
+  var shown = kw ? cache.customers.filter(function (c) { return String(c.pea || '').includes(kw) || (c.name || '').toLowerCase().includes(kw); }) : cache.customers;
   var h = '<table><thead><tr><th>ลำดับ</th><th>PEA</th><th>ชื่อ</th><th>ที่อยู่</th><th>สาขา</th><th>จัดการ</th></tr></thead><tbody>';
   if (!shown.length) h += '<tr><td colspan="6" style="text-align:center;color:#9ca3af;padding:20px">ไม่มีรายการ</td></tr>';
   shown.forEach(function (c, i) {
@@ -962,7 +962,19 @@ function renderUsers() {
 
 function approveUser(id) {
   showLoading('กำลังอัปเดต...');
-  gasPost({ action: 'updateUser', id: id, data: { status: 'approved' } }, function (err, r) { hideLoading(); renderUsers(); });
+  gasPost({ action: 'updateUser', id: String(id), data: { status: 'approved' } }, function (err, r) {
+    hideLoading();
+    if (err || !r || !r.ok) { alert('เกิดข้อผิดพลาด'); return; }
+    renderUsers();
+  });
+}
+function rejectUser(id) {
+  showLoading('กำลังอัปเดต...');
+  gasPost({ action: 'updateUser', id: String(id), data: { status: 'rejected' } }, function (err, r) {
+    hideLoading();
+    if (err || !r || !r.ok) { alert('เกิดข้อผิดพลาด'); return; }
+    renderUsers();
+  });
 }
 function rejectUser(id) {
   showLoading('กำลังอัปเดต...');
