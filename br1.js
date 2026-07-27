@@ -943,7 +943,7 @@ function renderUsers() {
         var recCount = _allRecsCache.filter(function (rec) { return String(rec.savedById) === String(u.id); }).length;
         var uid = String(u.id).replace(/'/g, "\\'");
         var rc = u.role === 'admin' ? 'badge-blue' : 'badge-green';
-        h += '<tr><td>' + esc(u.name) + '</td><td><code>' + esc(u.username) + '</code></td><td><code>' + esc(u.password || '') + '</code></td><td>' + esc(u.branch || '-') + '</td><td>' + esc(u.position || '-') + '</td>';
+        h += '<tr><td>' + esc(u.name) + '</td><td><code>' + esc(String(u.username)) + '</code></td><td><code>' + esc(String(u.password || '')) + '</code></td><td>' + esc(u.branch || '-') + '</td><td>' + esc(u.position || '-') + '</td>';
         h += '<td><span class="badge ' + rc + '">' + u.role + '</span></td><td><span class="badge ' + badge + '">' + stTH + '</span></td>';
         h += '<td><div style="display:flex;gap:4px;flex-wrap:wrap"><button class="btn btn-warning btn-sm" onclick="openEditUserById(\'' + uid + '\')">แก้ไข</button>';
         h += '<button class="btn btn-outline btn-sm" onclick="openUserHistoryById(\'' + uid + '\')">ประวัติ' + (recCount > 0 ? ' <span style="background:#742582;color:#fff;border-radius:20px;padding:1px 6px;font-size:11px">' + recCount + '</span>' : '') + '</button>';
@@ -1722,7 +1722,13 @@ function extractDate(dt) {
   }
   return dt;
 }
-function esc(s) { return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+function esc(s) {
+  return (s || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;'); 
+}
 function driveImg(url) {
   if (!url) return '';
   var m = url.match(/[?&]id=([a-zA-Z0-9_-]+)/); if (m) return 'https://lh3.googleusercontent.com/d/' + m[1];
