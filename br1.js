@@ -45,7 +45,7 @@ function setDbStatus(ok) {
   var dot = document.getElementById('dbDot');
   var txt = document.getElementById('dbStatusText');
   dot.className = 'db-dot' + (ok ? '' : ' err');
-  txt.textContent = ok ? 'GAS OK' : 'ออฟไลน์';
+  txt.textContent = ok ? 'Online' : 'Offline';
 }
 
 // ==============================================
@@ -828,6 +828,9 @@ function openEditRecordById(id) {
   if (!rec) { alert('ไม่พบรายการ'); return; }
   openEditRecord(id, rec);
 }
+
+var _erPhotoData = { meter: [null], work: [null, null], equip: [null, null] };
+
 function openEditRecord(id, rec) {
   document.getElementById('er_branch').value = rec.branch || '';
   document.getElementById('er_pea').value = rec.pea || '';
@@ -840,23 +843,89 @@ function openEditRecord(id, rec) {
   document.getElementById('er_datetime').value = rec.datetime || '';
   document.getElementById('er_id').value = id;
   document.getElementById('editRecordAlert').innerHTML = '';
+
+  // โหลดรูปเดิม
+  var ph = rec.photos;
+  if (typeof ph === 'string') { try { ph = JSON.parse(ph); } catch(e) { ph = {}; } }
+  ph = ph || {};
+  _erPhotoData = {
+    meter: [ph.meter ? ph.meter[0] : null],
+    work:  [ph.work  ? ph.work[0]  : null, ph.work  ? ph.work[1]  : null],
+    equip: [ph.equip ? ph.equip[0] : null, ph.equip ? ph.equip[1] : null]
+  };
+
+  // แสดงรูปเดิม
+  [['meter',1],['work',2],['equip',2]].forEach(function(g) {
+    for (var i = 0; i < g[1]; i++) {
+      erRenderPreview(g[0], i, _erPhotoData[g[0]][i]);
+    }
+  });
+
   document.getElementById('editRecordModal').style.display = 'flex';
 }
+
+function erRenderPreview(g, i, src) {
+  var el = document.getElementById('er_preview_' + g + '_' + i);
+  if (!el) return;
+  var imgSrc = null;
+  if (src) { if (typeof src === 'string') imgSrc = src; else if (src.url) imgSrc = src.url; }
+  if (imgSrc) {
+    el.innerHTML = '<img src="' + driveImg(imgSrc) + '" style="width:100%;height:80px;object-fit:cover;border-radius:6px">';
+  } else {
+    el.innerHTML = 'ไม่มีรูป';
+    el.style.cssText = 'background:#f3f4f6;height:80px;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#9ca3af;font-size:12px;margin-bottom:4px';
+  }
+}
+
+function erPhotoChange(g, i, input) {
+  var file = input.files[0]; if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var img = new Image();
+    img.onload = function() {
+      var canvas = document.createElement('canvas'), MAX = 800, w = img.width, h = img.height;
+      if (w > MAX) { h = Math.round(h * MAX / w); w = MAX; }
+      if (h > MAX) { w = Math.round(w * MAX / h); h = MAX; }
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      var b64 = canvas.toDataURL('image/jpeg', 0.7);
+      erRenderPreview(g, i, b64);
+      showLoading('กำลังอัปโหลดรูป...');
+      fetch(PHOTO_GAS_URL, {
+        method: 'POST', redirect: 'follow',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({ action: 'uploadPhoto', base64: b64, filename: g+'_'+i+'_'+Date.now()+'.jpg' })
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(r) {
+        hideLoading();
+        if (r && r.ok) { _erPhotoData[g][i] = r.url; }
+        else { alert('อัปโหลดรูปไม่สำเร็จ'); _erPhotoData[g][i] = null; erRenderPreview(g, i, null); }
+      })
+      .catch(function() { hideLoading(); alert('เชื่อมต่อไม่ได้'); });
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
 function closeEditRecord() { document.getElementById('editRecordModal').style.display = 'none'; }
+
 function saveEditRecord() {
   var id = document.getElementById('er_id').value;
   var data = {
     branch: gv('er_branch'), pea: gv('er_pea'), customer: gv('er_customer'),
     address: gv('er_address'), provider: gv('er_provider'), position: gv('er_position'),
     receiver: gv('er_receiver'), phone: gv('er_phone'), datetime: gv('er_datetime'),
+    photos: JSON.stringify(_erPhotoData),
     editedBy: currentUser.name, editedAt: Date.now()
   };
   showLoading('กำลังบันทึก...');
-  gasPost({ action: 'updateRecord', id: id, data: data }, function (err, r) {
+  gasPost({ action: 'updateRecord', id: id, data: data }, function(err, r) {
     hideLoading();
     if (err || !r || !r.ok) { showAlert('editRecordAlert', 'เกิดข้อผิดพลาด', 'danger'); return; }
     showAlert('editRecordAlert', 'บันทึกสำเร็จ', 'success');
-    setTimeout(function () { closeEditRecord(); renderHistory(); }, 1000);
+    setTimeout(function() { closeEditRecord(); renderHistory(); }, 1000);
   });
 }
 
